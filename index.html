@@ -79,7 +79,8 @@
             left: 0;
             right: 0;
             display: flex;
-            flex-wrap: wrap; /* Allow items to wrap to the next line */
+            /* flex-wrap: wrap; Removed flex-wrap to prevent icons from wrapping,
+               will adjust icon size to fit instead */
             justify-content: space-around;
             background-color: #ffffff;
             border-top: 1px solid #ccc;
@@ -93,19 +94,20 @@
             border-color: #444;
         }
         nav a {
-            font-size: 1.2em; /* Slightly smaller font for more icons */
+            font-size: 1.1em; /* Further reduced font size for icons */
             text-decoration: none;
             color: #6a5acd; /* Default icon color */
-            padding: 0.5em 0.6em; /* Adjusted padding */
+            padding: 0.4em 0.5em; /* Adjusted padding */
             border-radius: 8px;
             transition: background 0.2s, color 0.2s;
-            display: flex; /* Make icons and text (if any) align */
-            flex-direction: column; /* Stack icon and text */
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-width: 60px; /* Ensure minimum width for touch target */
+            min-width: 45px; /* Reduced min-width */
             text-align: center;
-            margin: 0.2em; /* Add some margin between buttons */
+            margin: 0 0.1em; /* Reduced margin between buttons */
+            flex-grow: 1; /* Allow icons to grow and fill space evenly */
         }
         /* Styling for active navigation link */
         nav a.active-nav {
@@ -133,10 +135,13 @@
             padding: 2em 1em 1em; /* Adjusted padding */
             animation: fadeIn 1s ease-in; /* Fade-in animation */
             min-height: calc(100vh - 150px); /* Adjusted for header + nav height */
+            /* For chat section, make it a flex container to push input to bottom */
+            display: flex;
+            flex-direction: column;
         }
         /* Active section display */
         section.active {
-            display: block;
+            display: flex; /* Changed to flex for active sections */
         }
         /* Card styling for content containers */
         .card {
@@ -207,7 +212,7 @@
         }
         /* Chat area styling */
         #chatArea {
-            height: 300px;
+            flex-grow: 1; /* Allow chat area to take up available space */
             overflow-y: scroll;
             padding: 1em;
             background: #f0f0f0;
@@ -253,19 +258,15 @@
             background: #7a8ebc;
             color: white;
         }
-        /* Chat input container styling (fixed at bottom above nav) */
+        /* Chat input container styling (now part of the flow, not fixed) */
         .chat-input {
             display: flex;
             gap: 0.5em;
-            position: fixed; /* Keep it fixed */
-            bottom: 65px; /* Adjust to be above the nav bar */
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 0.5em 1em;
+            padding: 0.5em 0; /* Adjusted padding */
             border-top: 1px solid #ccc;
-            z-index: 9; /* Slightly lower than nav */
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Add subtle shadow */
+            background: white; /* Ensure background is white */
+            flex-shrink: 0; /* Prevent it from shrinking */
+            margin-top: auto; /* Push to bottom of flex container (section) */
         }
         /* Dark mode for chat input container */
         .dark-mode .chat-input {
@@ -360,7 +361,7 @@
             nav a {
                 font-size: 1em; /* Smaller font for very small screens */
                 padding: 0.4em 0.5em;
-                min-width: 50px;
+                min-width: 40px; /* Further reduced min-width */
             }
             header h1 {
                 font-size: 1.8em;
@@ -440,7 +441,7 @@
                 </p>
                 <div id="chatArea"></div>
             </div>
-            <!-- Chat input is now outside the card but within the section, fixed at the bottom -->
+            <!-- Chat input is now part of the chat section's flex flow -->
             <div class="chat-input" id="chatInputArea">
                 <textarea id="chatMessageBox" placeholder="Type a message..."></textarea>
                 <button onclick="submitChat()">Send</button>
@@ -616,7 +617,10 @@
             // Remove active class from all sections
             document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
             // Add active class to the target section
-            document.getElementById(id).classList.add("active");
+            const targetSection = document.getElementById(id);
+            if (targetSection) {
+                targetSection.classList.add("active");
+            }
 
             // Remove active-nav class from all nav links
             document.querySelectorAll("nav a").forEach(link => link.classList.remove("active-nav"));
@@ -643,11 +647,19 @@
                 loadChatMessages();
                 // Show the chat input bar ONLY when on the chat page
                 document.getElementById("chatInputArea").style.display = "flex";
+                // Ensure chat area scrolls to bottom after showing
+                const chatArea = document.getElementById("chatArea");
+                if (chatArea) {
+                    chatArea.scrollTop = chatArea.scrollHeight;
+                }
             } else if (id === "quiz") {
                 currentQuiz = 0; // Reset quiz progress when entering the quiz page
                 loadQuiz();
             } else if (id === "tracker") {
-                initMap(); // Initialize or update map when tracker page is shown
+                // Delay map initialization to ensure the section is fully visible and rendered
+                setTimeout(() => {
+                    initMap();
+                }, 100); // Small delay
             }
         }
 
@@ -805,6 +817,7 @@
          * Loads the current quiz question or displays quiz completion message.
          */
         function loadQuiz() {
+            console.log("loadQuiz called. currentQuiz:", currentQuiz, "quiz length:", quiz.length);
             if (currentQuiz >= quiz.length) {
                 document.getElementById("quizQuestion").innerHTML = `<h3>🎉 Quiz Completed!</h3><p>You scored ${points} points.</p>`;
                 document.getElementById("restartQuizBtn").style.display = "block";
@@ -812,11 +825,16 @@
             }
             document.getElementById("restartQuizBtn").style.display = "none";
             const q = quiz[currentQuiz];
-            let html = `<h3>${q.q}</h3>`;
-            q.options.forEach((opt, i) => {
-                html += `<div class='quiz-option' onclick='selectAnswer(${i})'>${opt}</div>`;
-            });
-            document.getElementById("quizQuestion").innerHTML = html;
+            if (q) { // Added check if q exists
+                let html = `<h3>${q.q}</h3>`;
+                q.options.forEach((opt, i) => {
+                    html += `<div class='quiz-option' onclick='selectAnswer(${i})'>${opt}</div>`;
+                });
+                document.getElementById("quizQuestion").innerHTML = html;
+            } else {
+                console.error("Quiz question not found at index:", currentQuiz);
+                document.getElementById("quizQuestion").innerHTML = `<h3>Error loading quiz. Please try again.</h3>`;
+            }
         }
 
         /**
@@ -860,6 +878,14 @@
             const locationStatus = document.getElementById("locationStatus");
             const mapElement = document.getElementById("map");
 
+            // Ensure map container is visible and has dimensions before initializing Leaflet
+            if (mapElement.offsetWidth === 0 || mapElement.offsetHeight === 0) {
+                console.warn("Map container is not visible or has zero dimensions. Retrying map initialization...");
+                locationStatus.innerText = "Map area not ready. Retrying...";
+                setTimeout(initMap, 500); // Retry after a short delay
+                return;
+            }
+
             if (navigator.geolocation) {
                 locationStatus.innerText = "Attempting to get your location...";
                 mapElement.innerHTML = "Loading map..."; // Show loading text
@@ -882,6 +908,10 @@
                             // If map exists, just update the view and marker position
                             map.setView([latitude, longitude], 13);
                             marker.setLatLng([latitude, longitude]).setPopupContent('You are here!').openPopup();
+                        }
+                        // Invalidate size to ensure map renders correctly after being potentially hidden
+                        if (map) {
+                            map.invalidateSize();
                         }
                     },
                     (error) => {
@@ -967,3 +997,4 @@
     </script>
 </body>
 </html>
+
