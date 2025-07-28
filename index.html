@@ -71,7 +71,8 @@
             justify-content: space-around;
             background-color: #ffffff;
             border-top: 1px solid #ccc;
-            padding: 0.3em 0;
+            height: 60px; /* Fixed height for nav bar */
+            padding: 0; /* Remove padding from nav, add to nav a */
             z-index: 10;
         }
         /* Dark mode for navigation bar */
@@ -80,10 +81,14 @@
             border-color: #444;
         }
         nav a {
-            font-size: 1.0em; /* Changed from 1.5em to 1.0em */
+            font-size: 1.0em;
             text-decoration: none;
             color: #6a5acd; /* Default icon color */
-            padding: 0.5em 0.8em;
+            display: flex; /* Use flexbox for vertical centering */
+            align-items: center;
+            justify-content: center;
+            height: 100%; /* Take full height of parent nav */
+            padding: 0 0.8em; /* Only horizontal padding */
             border-radius: 8px;
             transition: background 0.2s, color: 0.2s;
         }
@@ -104,14 +109,20 @@
         /* Section styling (hidden by default, shown when active) */
         section {
             display: none;
-            height: calc(100vh - 150px); /* Adjusted for header + nav height */
+            /* Adjusted height to account for header (approx 80px) and fixed nav (60px) */
+            height: calc(100vh - 140px); /* 80px (header) + 60px (nav) */
             overflow-y: auto; /* Enable scrolling for content within section */
-            padding: 2em 1em 5em; /* Added padding at bottom for nav */
+            padding: 2em 1em 1em; /* Reduced general bottom padding */
             animation: fadeIn 1s ease-in; /* Fade-in animation */
         }
         /* Active section display */
         section.active {
             display: block;
+        }
+        /* Specific padding for chat section to account for chat input */
+        section#chat.active {
+            /* Add extra padding at the bottom to ensure content clears the chat input box */
+            padding-bottom: 70px; /* Height of chat-input (60px) + a little extra margin */
         }
         /* Card styling for content containers */
         .card {
@@ -122,9 +133,8 @@
             margin: auto;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 1em; /* Space between cards */
-            /* Ensure card can scroll its own content if it overflows */
-            max-height: calc(100vh - 200px); /* Adjusted max-height for card to fit within section */
-            overflow-y: auto;
+            /* Removed max-height and overflow-y from .card itself.
+               The parent section will now handle the scrolling. */
         }
         /* Dark mode for cards */
         .dark-mode .card {
@@ -233,14 +243,15 @@
             display: flex;
             gap: 0.5em;
             position: fixed;
-            bottom: 60px; /* Above the nav bar */
+            bottom: 60px; /* Position directly above the 60px tall nav bar */
             left: 0;
             right: 0;
             background: white;
-            padding: 0.5em 1em; /* Added side padding */
+            padding: 5px 1em; /* Adjusted padding for a total height of approx 60px */
+            height: 60px; /* Fixed height for the chat input container */
             border-top: 1px solid #ccc;
-            /* New: Hide by default */
-            display: none;
+            display: none; /* New: Hide by default */
+            z-index: 9; /* Ensure it's below nav if they ever overlap, though they shouldn't */
         }
         /* Dark mode for chat input container */
         .dark-mode .chat-input {
@@ -251,13 +262,16 @@
         .chat-input textarea {
             flex: 1;
             resize: none;
-            height: 50px;
+            height: 100%; /* Take full height of parent .chat-input */
             margin-top: 0; /* Override default margin */
+            padding: 8px; /* Adjust padding for text area */
         }
         /* Chat input button styling */
         .chat-input button {
             width: 80px;
             margin-top: 0; /* Override default margin */
+            height: 100%; /* Take full height of parent .chat-input */
+            padding: 8px; /* Adjust padding for button */
         }
         /* Map styling */
         #map {
@@ -705,7 +719,11 @@
 
         // Initial load for points and dark mode
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById("points").innerText = points;
+            const pointsElement = document.getElementById("points");
+            if (pointsElement) {
+                pointsElement.innerText = points;
+            }
+
             if (localStorage.getItem('darkMode') === 'enabled') {
                 document.body.classList.add('dark-mode');
             }
@@ -723,7 +741,10 @@
             const currentActiveSectionId = currentActiveSection ? currentActiveSection.id : null;
 
             // Hide the chat input bar by default
-            document.querySelector(".chat-input").style.display = "none";
+            const chatInput = document.querySelector(".chat-input");
+            if (chatInput) {
+                chatInput.style.display = "none";
+            }
 
             // Clear chat if navigating AWAY from the chat page
             if (currentActiveSectionId === 'chat' && id !== 'chat') {
@@ -733,7 +754,11 @@
             // Remove active class from all sections
             document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
             // Add active class to the target section
-            document.getElementById(id).classList.add("active");
+            const targetSection = document.getElementById(id);
+            if (targetSection) {
+                targetSection.classList.add("active");
+            }
+
 
             // Remove active-nav class from all nav links
             document.querySelectorAll("nav a").forEach(link => link.classList.remove("active-nav"));
@@ -742,61 +767,92 @@
             if (navLink) {
                 navLink.classList.add("active-nav");
             } else if (id === 'home') {
-                 document.querySelector('nav a[aria-label="Home"]').classList.add("active-nav");
+                const homeNavLink = document.querySelector('nav a[aria-label="Home"]');
+                if (homeNavLink) {
+                    homeNavLink.classList.add("active-nav");
+                }
             }
 
             // Logic specific to certain pages
             if (id === 'report') {
-                document.getElementById('reportForm').style.display = 'block';
-                document.getElementById('verifying').style.display = 'none';
-                document.getElementById('thanks').style.display = 'none';
+                const reportForm = document.getElementById('reportForm');
+                const verifying = document.getElementById('verifying');
+                const thanks = document.getElementById('thanks');
+                const reportName = document.getElementById("reportName");
+                const victimName = document.getElementById("victimName");
+                const reportText = document.getElementById("reportText");
+
+                if (reportForm) reportForm.style.display = 'block';
+                if (verifying) verifying.style.display = 'none';
+                if (thanks) thanks.style.display = 'none';
+                
                 // Clear form fields when navigating back to report page
-                document.getElementById("reportName").value = '';
-                document.getElementById("victimName").value = '';
-                document.getElementById("reportText").value = '';
+                if (reportName) reportName.value = '';
+                if (victimName) victimName.value = '';
+                if (reportText) reportText.value = '';
+
             } else if (id === 'chat') {
                 loadChatMessages();
                 // Show the chat input bar ONLY when on the chat page
-                document.querySelector(".chat-input").style.display = "flex";
+                if (chatInput) {
+                    chatInput.style.display = "flex";
+                }
             } else if (id === "quiz") {
                 // Initialize new quiz
                 currentQuestionIndex = 0;
                 score = 0;
                 updateScoreDisplay();
                 loadQuestion();
-                nextButton.style.display = 'block'; // Ensure next button is visible for new quiz
+                if (nextButton) {
+                    nextButton.style.display = 'block'; // Ensure next button is visible for new quiz
+                }
             } else if (id === "tracker") {
                 initMap();
             }
         }
 
         function clearChat() {
-            document.getElementById("chatArea").innerHTML = "";
+            const chatArea = document.getElementById("chatArea");
+            if (chatArea) {
+                chatArea.innerHTML = "";
+            }
             localStorage.removeItem('chatMessages');
         }
 
         function addPoints(p) {
             points += p;
-            document.getElementById("points").innerText = points;
+            const pointsElement = document.getElementById("points");
+            if (pointsElement) {
+                pointsElement.innerText = points;
+            }
             localStorage.setItem('bekindPoints', points);
         }
 
         function submitReport() {
-            const reportText = document.getElementById("reportText").value.trim();
+            const reportTextElement = document.getElementById("reportText");
+            const reportText = reportTextElement ? reportTextElement.value.trim() : '';
+
             if (!reportText) {
-                // Replaced alert with a custom message box or modal for better UX
                 showCustomAlert("Please describe the bullying.");
                 return;
             }
 
-            document.getElementById("reportForm").style.display = "none";
-            document.getElementById("verifying").style.display = "block";
+            const reportForm = document.getElementById("reportForm");
+            const verifying = document.getElementById("verifying");
+            const thanks = document.getElementById("thanks");
+
+            if (reportForm) reportForm.style.display = "none";
+            if (verifying) verifying.style.display = "block";
+
             setTimeout(() => {
-                document.getElementById("verifying").style.display = "none";
-                document.getElementById("thanks").style.display = "block";
+                if (verifying) verifying.style.display = "none";
+                if (thanks) thanks.style.display = "block";
                 addPoints(5); // Points are added here after verification
                 // Update points display immediately after adding them
-                document.getElementById("points").innerText = points; // Ensure display updates
+                const pointsElement = document.getElementById("points");
+                if (pointsElement) {
+                    pointsElement.innerText = points; // Ensure display updates
+                }
             }, 2000);
         }
 
@@ -826,18 +882,20 @@
 
         function displayChatMessage(sender, text) {
             const chatArea = document.getElementById("chatArea");
-            const p = document.createElement("p");
-            p.classList.add('chat-message');
+            if (chatArea) {
+                const p = document.createElement("p");
+                p.classList.add('chat-message');
 
-            if (sender === 'You') {
-                p.innerText = "You: " + text;
-                p.classList.add('user');
-            } else {
-                p.innerText = "Therapist Bot: " + text;
-                p.classList.add('bot');
+                if (sender === 'You') {
+                    p.innerText = "You: " + text;
+                    p.classList.add('user');
+                } else {
+                    p.innerText = "Therapist Bot: " + text;
+                    p.classList.add('bot');
+                }
+                chatArea.appendChild(p);
+                chatArea.scrollTop = chatArea.scrollHeight;
             }
-            chatArea.appendChild(p);
-            chatArea.scrollTop = chatArea.scrollHeight;
         }
 
         function loadChatMessages() {
@@ -849,6 +907,8 @@
 
         function submitChat() {
             const messageBox = document.querySelector(".chat-input textarea");
+            if (!messageBox) return; // Defensive check
+
             const userMessage = messageBox.value.trim();
 
             if (userMessage !== '') {
@@ -866,29 +926,33 @@
         }
 
         function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            if (document.body.classList.contains('dark-mode')) {
-                localStorage.setItem('darkMode', 'enabled');
-            } else {
-                localStorage.setItem('darkMode', 'disabled');
+            if (document.body) { // Defensive check
+                document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    localStorage.setItem('darkMode', 'enabled');
+                } else {
+                    localStorage.setItem('darkMode', 'disabled');
+                }
             }
         }
 
         function playSiren() {
             const sirenSound = document.getElementById("sirenSound");
-            sirenSound.play();
+            if (sirenSound) { // Defensive check
+                sirenSound.play();
 
-            setTimeout(() => {
-                sirenSound.pause();
-                sirenSound.currentTime = 0;
-            }, 3000);
-
-            // Replaced alert with a custom message box or modal for better UX
+                setTimeout(() => {
+                    sirenSound.pause();
+                    sirenSound.currentTime = 0;
+                }, 3000);
+            }
             showCustomAlert("SOS Alert Sent! Your trusted contacts have been notified.");
         }
 
         // New Quiz Functions
         function loadQuestion() {
+            if (!questionElement || !optionsContainer || !nextButton || !scoreDisplay) return; // Defensive check
+
             answeredCurrentQuestion = false; // Reset for new question
             nextButton.disabled = true; // Disable next button until an answer is chosen
 
@@ -913,7 +977,7 @@
         }
 
         function checkAnswer(event) {
-            if (answeredCurrentQuestion) {
+            if (answeredCurrentQuestion || !optionsContainer || !nextButton) { // Defensive checks
                 return; // Already answered this question, do nothing
             }
 
@@ -936,7 +1000,7 @@
                 selectedOption.classList.add('incorrect'); // Optionally show incorrect in red
                 // Also show the correct answer
                 const correctOptionButton = optionsContainer.querySelector(`[data-index="${correctIndex}"]`);
-                if (correctOptionButton) {
+                if (correctOptionButton) { // Defensive check
                     correctOptionButton.classList.add('correct');
                 }
             }
@@ -951,6 +1015,8 @@
         }
 
         function nextQuestion() {
+            if (!questionElement || !optionsContainer || !nextButton) return; // Defensive check
+
             currentQuestionIndex++;
             if (currentQuestionIndex < quizData.length) {
                 loadQuestion();
@@ -960,9 +1026,15 @@
         }
 
         function endQuiz() {
-            questionElement.textContent = `Quiz Finished! Your final score is ${score} out of ${quizData.length * 2}.`;
-            optionsContainer.innerHTML = ''; // Clear options
-            nextButton.style.display = 'none'; // Hide next button
+            if (questionElement) { // Defensive check
+                questionElement.textContent = `Quiz Finished! Your final score is ${score} out of ${quizData.length * 2}.`;
+            }
+            if (optionsContainer) { // Defensive check
+                optionsContainer.innerHTML = ''; // Clear options
+            }
+            if (nextButton) { // Defensive check
+                nextButton.style.display = 'none'; // Hide next button
+            }
         }
 
         // Custom Alert/Modal for better UX (replaces alert())
@@ -1008,13 +1080,21 @@
                 `;
                 document.body.appendChild(modal);
 
-                document.getElementById('customAlertCloseBtn').onclick = () => {
-                    modal.style.display = 'none';
-                };
+                const customAlertCloseBtn = document.getElementById('customAlertCloseBtn');
+                if (customAlertCloseBtn) { // Defensive check
+                    customAlertCloseBtn.onclick = () => {
+                        if (modal) modal.style.display = 'none';
+                    };
+                }
             }
 
-            document.getElementById('customAlertMessage').innerText = message;
-            modal.style.display = 'flex';
+            const customAlertMessage = document.getElementById('customAlertMessage');
+            if (customAlertMessage) { // Defensive check
+                customAlertMessage.innerText = message;
+            }
+            if (modal) { // Defensive check
+                modal.style.display = 'flex';
+            }
         }
 
 
@@ -1031,20 +1111,27 @@
             const latitude = (data1 * 2 - 31330 + 10000) / 1000; // Example: (31330 - 10000) / 1000 = 21.33 + 10 = 31.33
             const longitude = (data2 * 2 - 75560 + 10000) / 1000; // Example: (75560 - 10000) / 1000 = 65.56 + 10 = 75.56
 
-            locationStatus.innerText = `Showing location of MGN Public School, Adarsh Nagar, Jalandhar.`;
+            if (locationStatus) { // Defensive check
+                locationStatus.innerText = `Showing location of MGN Public School, Adarsh Nagar, Jalandhar.`;
+            }
 
             // Initialize map only if it hasn't been initialized
-            if (!map) {
-                map = L.map('map').setView([latitude, longitude], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                }).addTo(map);
-                marker = L.marker([latitude, longitude]).addTo(map)
-                    .bindPopup('MGN Public School, Adarsh Nagar, Jalandhar').openPopup();
-            } else {
-                // If map exists, just update the view and marker position
-                map.setView([latitude, longitude], 13);
-                marker.setLatLng([latitude, longitude]).setPopupContent('MGN Public School, Adarsh Nagar, Jalandhar').openPopup();
+            const mapElement = document.getElementById('map');
+            if (mapElement) { // Defensive check for map element
+                if (!map) {
+                    map = L.map('map').setView([latitude, longitude], 13);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                    marker = L.marker([latitude, longitude]).addTo(map)
+                        .bindPopup('MGN Public School, Adarsh Nagar, Jalandhar').openPopup();
+                } else {
+                    // If map exists, just update the view and marker position
+                    map.setView([latitude, longitude], 13);
+                    if (marker) { // Defensive check for marker
+                        marker.setLatLng([latitude, longitude]).setPopupContent('MGN Public School, Adarsh Nagar, Jalandhar').openPopup();
+                    }
+                }
             }
         }
     </script>
