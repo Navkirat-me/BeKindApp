@@ -256,41 +256,6 @@
             width: 80px;
             margin-top: 0; /* Override default margin */
         }
-        /* Quiz option styling */
-        .quiz-option {
-            padding: 1em;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            margin: 0.5em 0;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        /* Styling for correct quiz option */
-        .quiz-option.correct {
-            background: #c8e6c9;
-            border-color: #8bc34a;
-        }
-        /* Styling for wrong quiz option */
-        .quiz-option.wrong {
-            background: #ffcdd2;
-            border-color: #ef9a9a;
-        }
-        /* Dark mode for quiz options */
-        .dark-mode .quiz-option {
-            background: #444;
-            border-color: #666;
-            color: white;
-        }
-        /* Dark mode for correct quiz option */
-        .dark-mode .quiz-option.correct {
-            background: #558B2F;
-            border-color: #8BC34A;
-        }
-        /* Dark mode for wrong quiz option */
-        .dark-mode .quiz-option.wrong {
-            background: #C62828;
-            border-color: #EF5350;
-        }
         /* Map styling */
         #map {
             height: 300px; /* Adjusted height to fit better within the card/section */
@@ -315,12 +280,166 @@
             height: 100%;
             border: 0;
         }
+        /* New Quiz CSS */
+        #score-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            background-color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 1em; /* Added margin for spacing */
+            text-align: center;
+        }
+        .dark-mode #score-display {
+            background-color: #444;
+            color: white;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            margin: auto; /* Center the container */
+        }
+
+        .dark-mode .quiz-container {
+             background-color: #2c2c2c;
+        }
+
+        #quizCard h1 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+        .dark-mode #quizCard h1 {
+            color: white;
+        }
+
+
+        #question {
+            font-size: 1.4em;
+            margin-bottom: 25px;
+            color: #555;
+            min-height: 60px; /* To prevent layout shift for short questions */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dark-mode #question {
+            color: #ccc;
+        }
+
+        #options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option {
+            background-color: #e0e0e0;
+            color: #333;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            text-align: left;
+        }
+        .dark-mode .option {
+            background-color: #555;
+            color: white;
+        }
+
+
+        .option:hover:not(.correct):not(.incorrect) {
+            background-color: #d0d0d0;
+            transform: translateY(-2px);
+        }
+        .dark-mode .option:hover:not(.correct):not(.incorrect) {
+            background-color: #666;
+        }
+
+
+        .option.correct {
+            background-color: #4CAF50; /* Green for correct */
+            color: white;
+            font-weight: bold;
+        }
+
+        .option.incorrect {
+            background-color: #f44336; /* Red for incorrect (optional) */
+            color: white;
+            font-weight: bold;
+        }
+
+        .option:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        #next-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #next-btn:hover {
+            background-color: #0056b3;
+        }
+
+        #next-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 20px;
+            }
+
+            #quizCard h1 {
+                font-size: 1.5em;
+            }
+
+            #question {
+                font-size: 1.2em;
+            }
+
+            .option {
+                font-size: 1em;
+                padding: 12px 15px;
+            }
+
+            #next-btn {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+
+            #score-display {
+                font-size: 1em;
+                padding: 8px 12px;
+                margin-top: 15px; /* Adjust top positioning for mobile */
+                margin-right: 15px; /* Adjust right positioning for mobile */
+            }
+        }
     </style>
 </head>
 <body>
 
     <audio id="sirenSound" src="https://www.soundjay.com/misc/sounds/siren-police-01.mp3" preload="auto"></audio>
-    <audio id="tickSound" src="https://www.soundjay.com/buttons/sounds/button-1.mp3" preload="auto"></audio>
 
     <header>
         <div id="darkToggle" onclick="toggleDarkMode()">🌙</div>
@@ -371,9 +490,12 @@
 
     <section id="quiz">
         <div class="card" id="quizCard">
-            <h2>🧠 Quiz Time!</h2>
-            <div id="quizQuestion"></div>
-            <button id="restartQuizBtn" style="display:none;" onclick="resetQuiz()">Restart Quiz</button>
+            <div id="score-display">Score: 0</div>
+            <h1>Anti-Bullying Awareness Quiz</h1>
+            <div id="question"></div>
+            <div id="options-container">
+            </div>
+            <button id="next-btn" disabled>Next Question</button>
         </div>
     </section>
 
@@ -446,7 +568,7 @@
                         <li>**Immediate Support & Resources:** Quick access to pre-defined emergency contacts (e.g., parents, school officials, national crisis hotlines). Links to relevant mental health services, counselling support, and anti-bullying organizations. Provision of practical advice and tools to help users manage bullying situations.</li>
                         <li>**Secure Communication Channels:** Facilitate secure, in-app communication between reporters and designated support personnel (e.g., school counsellors, administrators). Implement encrypted in-app messaging for follow-ups and ongoing support.</li>
                         <li>**Admin & Parent/Guardian Dashboards (If Applicable):** Real-time alerts for new reports. Tools for tracking, managing, and resolving reported cases. Secure insights into bullying trends (while maintaining strict user privacy). Differentiated access levels for various users (e.g., parents, school staff).</li>
-                        <li>**Educational Content:** Clear explanations of different bullying types. Actionable strategies for self-protection and supporting others. Encouragement and guidance on how to be an effective "upstander." Promotion of responsible and ethical online behaviour.</li>
+                        <li>**Educational Content:** Clear explanations of bullying types. Actionable strategies for self-protection and supporting others. Encouragement and guidance on how to be an effective "upstander." Promotion of responsible and ethical online behaviour.</li>
                     </ul>
                 </li>
                 <li>
@@ -511,16 +633,72 @@
 
     <script>
         let points = parseInt(localStorage.getItem('bekindPoints')) || 0;
-        let currentQuiz = 0;
         let map;
         let marker;
 
-        const quiz = [
-            { q: "What is bullying?", options: ["Being kind", "Hurting someone repeatedly", "Helping others"], answer: 1 },
-            { q: "What should you do if you see bullying?", options: ["Ignore", "Join in", "Tell a trusted adult"], answer: 2 },
-            { q: "Cyberbullying happens...", options: ["At school", "On the internet", "In playground"], answer: 1 },
-            { q: "One way to stop bullying is...", options: ["Support bullies", "Be silent", "Stand up calmly"], answer: 2 },
+        // New Quiz Data and Variables
+        const quizData = [
+            {
+                question: "What is bullying?",
+                options: [
+                    "A friendly joke between friends",
+                    "A one-time disagreement",
+                    "Repeated aggressive behavior intended to hurt or dominate someone",
+                    "Accidentally bumping into someone"
+                ],
+                correct: 2
+            },
+            {
+                question: "If you witness someone being bullied, what should you do?",
+                options: [
+                    "Ignore it and walk away",
+                    "Join in the bullying",
+                    "Tell a trusted adult (parent, teacher, counselor)",
+                    "Laugh along with the bully"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which of the following is NOT a form of bullying?",
+                options: [
+                    "Physical bullying (hitting, pushing)",
+                    "Verbal bullying (teasing, name-calling)",
+                    "Cyberbullying (spreading rumors online)",
+                    "A respectful debate about different opinions"
+                ],
+                correct: 3
+            },
+            {
+                question: "What is an important step if you are being bullied?",
+                options: [
+                    "Keep it a secret and deal with it alone",
+                    "Retaliate with violence",
+                    "Tell a trusted adult and document what happened",
+                    "Blame yourself for the bullying"
+                ],
+                correct: 2
+            },
+            {
+                question: "How can we create a more inclusive and respectful environment?",
+                options: [
+                    "By judging others based on differences",
+                    "By being empathetic and standing up for others",
+                    "By ignoring people who are different",
+                    "By encouraging gossip"
+                ],
+                correct: 1
+            }
         ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answeredCurrentQuestion = false;
+
+        // Element references for the quiz
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options-container');
+        const nextButton = document.getElementById('next-btn');
+        const scoreDisplay = document.getElementById('score-display');
 
         // Initial load for points and dark mode
         document.addEventListener('DOMContentLoaded', () => {
@@ -529,6 +707,11 @@
                 document.body.classList.add('dark-mode');
             }
             showPage('home'); // Ensure 'home' is active on load and its nav link is styled
+
+            // Add event listener for the new quiz's "Next" button
+            if (nextButton) {
+                nextButton.addEventListener('click', nextQuestion);
+            }
         });
 
         function showPage(id) {
@@ -559,7 +742,6 @@
                  document.querySelector('nav a[aria-label="Home"]').classList.add("active-nav");
             }
 
-
             // Logic specific to certain pages
             if (id === 'report') {
                 document.getElementById('reportForm').style.display = 'block';
@@ -574,8 +756,12 @@
                 // Show the chat input bar ONLY when on the chat page
                 document.querySelector(".chat-input").style.display = "flex";
             } else if (id === "quiz") {
-                currentQuiz = 0; // Reset quiz progress when entering the quiz page
-                loadQuiz();
+                // Initialize new quiz
+                currentQuestionIndex = 0;
+                score = 0;
+                updateScoreDisplay();
+                loadQuestion();
+                nextButton.style.display = 'block'; // Ensure next button is visible for new quiz
             } else if (id === "tracker") {
                 initMap();
             }
@@ -696,45 +882,82 @@
             alert("SOS Alert Sent! Your trusted contacts have been notified.");
         }
 
-        function loadQuiz() {
-            if (currentQuiz >= quiz.length) {
-                document.getElementById("quizQuestion").innerHTML = `<h3>🎉 Quiz Completed!</h3><p>You scored ${points} points.</p>`;
-                document.getElementById("restartQuizBtn").style.display = "block";
+        // New Quiz Functions
+        function loadQuestion() {
+            answeredCurrentQuestion = false; // Reset for new question
+            nextButton.disabled = true; // Disable next button until an answer is chosen
+
+            const currentQuiz = quizData[currentQuestionIndex];
+            if (!currentQuiz) { // Check if quiz is finished
+                endQuiz();
                 return;
             }
-            document.getElementById("restartQuizBtn").style.display = "none";
-            const q = quiz[currentQuiz];
-            let html = `<h3>${q.q}</h3>`;
-            q.options.forEach((opt, i) => {
-                html += `<div class='quiz-option' onclick='selectAnswer(${i})'>${opt}</div>`;
+
+            questionElement.textContent = currentQuiz.question;
+            optionsContainer.innerHTML = ''; // Clear previous options
+
+            currentQuiz.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.classList.add('option');
+                button.textContent = option;
+                button.setAttribute('data-index', index); // Store index for checking answer
+                button.addEventListener('click', checkAnswer);
+                optionsContainer.appendChild(button);
             });
-            document.getElementById("quizQuestion").innerHTML = html;
+            updateScoreDisplay(); // Update score display at the start of each question
         }
 
-        function selectAnswer(i) {
-            const options = document.querySelectorAll("#quizQuestion .quiz-option");
-            const correct = quiz[currentQuiz].answer;
-
-            options.forEach((opt, idx) => {
-                if (idx === correct) opt.classList.add("correct");
-                if (idx === i && i !== correct) opt.classList.add("wrong");
-                opt.onclick = null; // Disable further clicks on options
-            });
-
-            if (i === correct) {
-                document.getElementById("tickSound").play();
-                addPoints(2);
+        function checkAnswer(event) {
+            if (answeredCurrentQuestion) {
+                return; // Already answered this question, do nothing
             }
-            currentQuiz++;
-            setTimeout(loadQuiz, 1500);
+
+            answeredCurrentQuestion = true;
+            const selectedOption = event.target;
+            const selectedIndex = parseInt(selectedOption.getAttribute('data-index'));
+            const correctIndex = quizData[currentQuestionIndex].correct;
+
+            // Disable all options after an answer is selected
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+            });
+
+            if (selectedIndex === correctIndex) {
+                selectedOption.classList.add('correct');
+                score += 2; // Add 2 points for correct answer to quiz score
+                addPoints(2); // Add 2 points to the main app points as well
+                updateScoreDisplay();
+            } else {
+                selectedOption.classList.add('incorrect'); // Optionally show incorrect in red
+                // Also show the correct answer
+                const correctOptionButton = optionsContainer.querySelector(`[data-index="${correctIndex}"]`);
+                if (correctOptionButton) {
+                    correctOptionButton.classList.add('correct');
+                }
+            }
+
+            nextButton.disabled = false; // Enable next button
         }
 
-        function resetQuiz() {
-            currentQuiz = 0;
-            points = 0; // Reset points for quiz
-            localStorage.setItem('bekindPoints', points);
-            document.getElementById("points").innerText = points;
-            loadQuiz();
+        function updateScoreDisplay() {
+            if (scoreDisplay) {
+                scoreDisplay.textContent = `Score: ${score}`;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+
+        function endQuiz() {
+            questionElement.textContent = `Quiz Finished! Your final score is ${score} out of ${quizData.length * 2}.`;
+            optionsContainer.innerHTML = ''; // Clear options
+            nextButton.style.display = 'none'; // Hide next button
         }
 
         function initMap() {
