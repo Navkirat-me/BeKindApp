@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>BeKind: Stop Bullying</title>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Leaflet CSS for maps -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         /* Universal box-sizing for consistent layout */
         * {
@@ -18,12 +13,9 @@
             font-family: 'Segoe UI', sans-serif;
             margin: 0;
             background: #f4f8fd;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow: hidden; /* Prevent body scroll, sections handle it */
             position: relative;
             transition: background 0.3s, color 0.3s;
-            min-height: 100vh; /* Ensure body takes full viewport height */
-            display: flex;
-            flex-direction: column;
         }
         /* Dark mode styling for body */
         body.dark-mode {
@@ -37,7 +29,6 @@
             padding: 1em;
             text-align: center;
             position: relative;
-            flex-shrink: 0; /* Prevent header from shrinking */
         }
         /* Points display in header */
         .points {
@@ -49,7 +40,6 @@
             padding: 0.4em 1em;
             border-radius: 20px;
             font-weight: bold;
-            z-index: 1; /* Ensure it's above other elements if needed */
         }
         /* Dark mode for points display */
         .dark-mode .points {
@@ -70,7 +60,6 @@
             justify-content: center;
             width: 40px; /* Consistent size */
             height: 40px;
-            z-index: 1; /* Ensure it's above other elements if needed */
         }
         /* Navigation bar styling (fixed at bottom) */
         nav {
@@ -79,14 +68,11 @@
             left: 0;
             right: 0;
             display: flex;
-            /* flex-wrap: wrap; Removed flex-wrap to prevent icons from wrapping,
-               will adjust icon size to fit instead */
             justify-content: space-around;
             background-color: #ffffff;
             border-top: 1px solid #ccc;
             padding: 0.3em 0;
-            z-index: 10; /* Ensure nav is on top */
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); /* Add subtle shadow */
+            z-index: 10;
         }
         /* Dark mode for navigation bar */
         .dark-mode nav {
@@ -94,20 +80,12 @@
             border-color: #444;
         }
         nav a {
-            font-size: 1.1em; /* Further reduced font size for icons */
+            font-size: 1.5em;
             text-decoration: none;
             color: #6a5acd; /* Default icon color */
-            padding: 0.4em 0.5em; /* Adjusted padding */
+            padding: 0.5em 0.8em;
             border-radius: 8px;
-            transition: background 0.2s, color 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-width: 45px; /* Reduced min-width */
-            text-align: center;
-            margin: 0 0.1em; /* Reduced margin between buttons */
-            flex-grow: 1; /* Allow icons to grow and fill space evenly */
+            transition: background 0.2s, color: 0.2s;
         }
         /* Styling for active navigation link */
         nav a.active-nav {
@@ -123,25 +101,17 @@
             color: white;
             background-color: #9370DB; /* Dark mode active background */
         }
-        /* Main content area */
-        main {
-            flex-grow: 1; /* Allow main content to take available space */
-            overflow-y: auto; /* Enable scrolling for content within main */
-            padding-bottom: 80px; /* Space for the fixed nav */
-        }
         /* Section styling (hidden by default, shown when active) */
         section {
             display: none;
-            padding: 2em 1em 1em; /* Adjusted padding */
+            height: calc(100vh - 150px); /* Adjusted for header + nav height */
+            overflow-y: auto; /* Enable scrolling for content within section */
+            padding: 2em 1em 5em; /* Added padding at bottom for nav */
             animation: fadeIn 1s ease-in; /* Fade-in animation */
-            min-height: calc(100vh - 150px); /* Adjusted for header + nav height */
-            /* For chat section, make it a flex container to push input to bottom */
-            display: flex;
-            flex-direction: column;
         }
         /* Active section display */
         section.active {
-            display: flex; /* Changed to flex for active sections */
+            display: block;
         }
         /* Card styling for content containers */
         .card {
@@ -200,10 +170,8 @@
             text-align: center;
             padding: 1em;
             font-size: 0.9em;
-            margin-top: auto; /* Push footer to the bottom */
-            padding-bottom: 70px; /* Space for the fixed nav */
+            margin-bottom: 60px; /* Space for the fixed nav */
             color: #555;
-            flex-shrink: 0; /* Prevent footer from shrinking */
         }
         /* Dark mode for footer */
         .dark-mode footer {
@@ -212,15 +180,14 @@
         }
         /* Chat area styling */
         #chatArea {
-            flex-grow: 1; /* Allow chat area to take up available space */
+            height: 300px;
             overflow-y: scroll;
             padding: 1em;
             background: #f0f0f0;
             border-radius: 10px;
-            margin-top: 1em;
+            margin-top: 1em; /* Adjusted for disclaimer */
             display: flex;
             flex-direction: column; /* To make messages stack */
-            margin-bottom: 1em; /* Space before chat input */
         }
         /* Dark mode for chat area */
         .dark-mode #chatArea {
@@ -258,15 +225,19 @@
             background: #7a8ebc;
             color: white;
         }
-        /* Chat input container styling (now part of the flow, not fixed) */
+        /* Chat input container styling (fixed at bottom above nav) */
         .chat-input {
             display: flex;
             gap: 0.5em;
-            padding: 0.5em 0; /* Adjusted padding */
+            position: fixed;
+            bottom: 60px; /* Above the nav bar */
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 0.5em 1em; /* Added side padding */
             border-top: 1px solid #ccc;
-            background: white; /* Ensure background is white */
-            flex-shrink: 0; /* Prevent it from shrinking */
-            margin-top: auto; /* Push to bottom of flex container (section) */
+            /* New: Hide by default */
+            display: none;
         }
         /* Dark mode for chat input container */
         .dark-mode .chat-input {
@@ -279,13 +250,11 @@
             resize: none;
             height: 50px;
             margin-top: 0; /* Override default margin */
-            padding: 0.8em;
         }
         /* Chat input button styling */
         .chat-input button {
             width: 80px;
             margin-top: 0; /* Override default margin */
-            flex-shrink: 0; /* Prevent button from shrinking */
         }
         /* Quiz option styling */
         .quiz-option {
@@ -295,9 +264,6 @@
             margin: 0.5em 0;
             cursor: pointer;
             transition: background 0.3s;
-        }
-        .quiz-option:hover {
-            background: #f0f0f0;
         }
         /* Styling for correct quiz option */
         .quiz-option.correct {
@@ -331,12 +297,6 @@
             width: 100%;
             border-radius: 10px;
             margin-top: 1em;
-            background-color: #e0e0e0; /* Placeholder background */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            color: #555;
         }
         /* Video container styling */
         .video-container {
@@ -354,21 +314,6 @@
             width: 100%;
             height: 100%;
             border: 0;
-        }
-
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 600px) {
-            nav a {
-                font-size: 1em; /* Smaller font for very small screens */
-                padding: 0.4em 0.5em;
-                min-width: 40px; /* Further reduced min-width */
-            }
-            header h1 {
-                font-size: 1.8em;
-            }
-            header p {
-                font-size: 0.9em;
-            }
         }
     </style>
 </head>
@@ -392,190 +337,184 @@
         <a href="#" onclick="showPage('sos')" aria-label="SOS"><i class="fas fa-exclamation-triangle"></i></a>
         <a href="#" onclick="showPage('quiz')" aria-label="Quiz"><i class="fas fa-question-circle"></i></a>
         <a href="#" onclick="showPage('tracker')" aria-label="Tracker"><i class="fas fa-map-marker-alt"></i></a>
-        <a href="#" onclick="showPage('about')" aria-label="Guidelines"><i class="fas fa-info-circle"></i></a>
+        <a href="#" onclick="showPage('about')" aria-label="About"><i class="fas fa-info-circle"></i></a>
     </nav>
 
-    <main>
-        <section id="home" class="active">
-            <div class="card">
-                <h2>Welcome to BeKind 💜</h2>
-                <p>This app helps children understand what bullying and cyberbullying are, and how they can stand up against them safely and kindly.</p>
-                <h3>What is Bullying?</h3>
-                <p>Bullying is when someone repeatedly hurts or threatens another person on purpose. It can be physical, verbal, or online (cyberbullying).</p>
-                <h3>Why It Hurts</h3>
-                <p>Being bullied can make someone feel sad, scared, or lonely. It can also affect their confidence and mental health.</p>
-                <h3>Solutions</h3>
-                <ul>
-                    <li>Talk to a trusted adult.</li>
-                    <li>Stand up for yourself calmly and confidently.</li>
-                    <li>Support others who are being bullied.</li>
-                    <li>Use this app to report bullying and get help.</li>
-                </ul>
-            </div>
-        </section>
+    <section id="home" class="active">
+        <div class="card">
+            <h2>Welcome to BeKind 💜</h2>
+            <p>This app helps children understand what bullying and cyberbullying are, and how they can stand up against them safely and kindly.</p>
+            <h3>What is Bullying?</h3>
+            <p>Bullying is when someone repeatedly hurts or threatens another person on purpose. It can be physical, verbal, or online (cyberbullying).</p>
+            <h3>Why It Hurts</h3>
+            <p>Being bullied can make someone feel sad, scared, or lonely. It can also affect their confidence and mental health.</p>
+            <h3>Solutions</h3>
+            <ul>
+                <li>Talk to a trusted adult.</li>
+                <li>Stand up for yourself calmly and confidently.</li>
+                <li>Support others who are being bullied.</li>
+                <li>Use this app to report bullying and get help.</li>
+            </ul>
+        </div>
+    </section>
 
-        <section id="learn">
-            <div class="card">
-                <h2>📚 Learn About Bullying</h2>
-                <p>Watch this animated video to understand what bullying is and how to deal with it kindly and effectively.</p>
-                <div class="video-container">
-                   <iframe width="560" height="315" src="https://www.youtube.com/embed/ffzIhWoi5ac?si=4a0zcQzG8QbsC_Nv&amp;start=18" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                </div>
-                <p style="margin-top: 1em;">This video series provides a simple and clear explanation of bullying, its different forms, and positive ways to respond. Remember, you're not alone, and there's always help available.</p>
+    <section id="learn">
+        <div class="card">
+            <h2>📚 Learn About Bullying</h2>
+            <p>Watch this animated video to understand what bullying is and how to deal with it kindly and effectively.</p>
+            <div class="video-container">
+               <iframe width="560" height="315" src="https://www.youtube.com/embed/ffzIhWoi5ac?si=4a0zcQzG8QbsC_Nv&amp;start=18" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
-        </section>
+            <p style="margin-top: 1em;">This video series provides a simple and clear explanation of bullying, its different forms, and positive ways to respond. Remember, you're not alone, and there's always help available.</p>
+        </div>
+    </section>
 
-        <section id="quiz">
-            <div class="card" id="quizCard">
-                <h2>🧠 Quiz Time!</h2>
-                <div id="quizQuestion"></div>
-                <button id="restartQuizBtn" style="display:none;" onclick="resetQuiz()">Restart Quiz</button>
-            </div>
-        </section>
+    <section id="quiz">
+        <div class="card" id="quizCard">
+            <h2>🧠 Quiz Time!</h2>
+            <div id="quizQuestion"></div>
+            <button id="restartQuizBtn" style="display:none;" onclick="resetQuiz()">Restart Quiz</button>
+        </div>
+    </section>
 
-        <section id="chat">
-            <div class="card">
-                <h2><i class="fas fa-comments"></i> Group Chat with Therapist Bot</h2>
-                <p style="font-size: 0.9em; color: #777; margin-bottom: 1em;">
-                    <i class="fas fa-info-circle"></i> This chat bot provides general guidance and is not a substitute for professional medical or mental health advice. If you are in crisis, please use the SOS feature or reach out to a trusted adult or professional.
-                </p>
-                <div id="chatArea"></div>
-            </div>
-            <!-- Chat input is now part of the chat section's flex flow -->
-            <div class="chat-input" id="chatInputArea">
-                <textarea id="chatMessageBox" placeholder="Type a message..."></textarea>
-                <button onclick="submitChat()">Send</button>
-            </div>
-        </section>
+    <section id="chat">
+        <div class="card">
+            <h2><i class="fas fa-comments"></i> Group Chat with Therapist Bot</h2>
+            <p style="font-size: 0.9em; color: #777; margin-bottom: 1em;">
+                <i class="fas fa-info-circle"></i> This chat bot provides general guidance and is not a substitute for professional medical or mental health advice. If you are in crisis, please use the SOS feature or reach out to a trusted adult or professional.
+            </p>
+            <div id="chatArea"></div>
+        </div>
+        <div class="chat-input">
+            <textarea placeholder="Type a message..."></textarea>
+            <button onclick="submitChat()">Send</button>
+        </div>
+    </section>
 
-        <section id="report">
-            <div class="card" id="reportForm">
-                <h2>📢 Report Bullying</h2>
-                <input id="reportName" type="text" placeholder="Your Name (optional)" />
-                <input id="victimName" type="text" placeholder="Victim's Name (optional)" />
-                <textarea id="reportText" rows="4" placeholder="Describe the bullying" required></textarea>
-                <button onclick="submitReport()">🚀 Submit Report</button>
-            </div>
-            <div class="card" id="verifying" style="display:none;">
-                <h3>🔍 Your report is being verified...</h3>
-            </div>
-            <div class="card" id="thanks" style="display:none;">
-                <h3>✅ +5 Points! Thank you for being brave!</h3>
-                <button onclick="showPage('report')">Go Back</button>
-            </div>
-        </section>
+    <section id="report">
+        <div class="card" id="reportForm">
+            <h2>📢 Report Bullying</h2>
+            <input id="reportName" type="text" placeholder="Your Name (optional)" />
+            <input id="victimName" type="text" placeholder="Victim's Name (optional)" />
+            <textarea id="reportText" rows="4" placeholder="Describe the bullying" required></textarea>
+            <button onclick="submitReport()">🚀 Submit Report</button>
+        </div>
+        <div class="card" id="verifying" style="display:none;">
+            <h3>🔍 Your report is being verified...</h3>
+        </div>
+        <div class="card" id="thanks" style="display:none;">
+            <h3>✅ +5 Points! Thank you for being brave!</h3>
+            <button onclick="showPage('report')">Go Back</button>
+        </div>
+    </section>
 
-        <section id="sos">
-            <div class="card">
-                <h2>🚨 Emergency SOS</h2>
-                <p>If you feel unsafe, click the button below. It will alert your trusted contacts.</p>
-                <button style="background:red;" onclick="playSiren()">Send SOS Alert 🚨</button>
-            </div>
-        </section>
+    <section id="sos">
+        <div class="card">
+            <h2>🚨 Emergency SOS</h2>
+            <p>If you feel unsafe, click the button below. It will alert your trusted contacts.</p>
+            <button style="background:red;" onclick="playSiren()">Send SOS Alert 🚨</button>
+        </div>
+    </section>
 
-        <section id="tracker">
-            <div class="card">
-                <h2>📍 Your Location</h2>
-                <p>This map shows your current location. This feature can be used by trusted adults to locate you in an emergency.</p>
-                <div id="map">Loading map...</div> <!-- Added loading text -->
-                <p id="locationStatus" style="margin-top: 1em; font-weight: bold;"></p>
-            </div>
-        </section>
+    <section id="tracker">
+        <div class="card">
+            <h2>📍 Your Location</h2>
+            <p>This map shows your current location. This feature can be used by trusted adults to locate you in an emergency.</p>
+            <div id="map"></div>
+            <p id="locationStatus" style="margin-top: 1em; font-weight: bold;"></p>
+        </div>
+    </section>
 
-        <section id="about">
-            <div class="card">
-                <h2>📚 Guidelines & Policies</h2>
-                <ul>
-                    <li>
-                        **I. Core Principles & Philosophy**
-                        <ul>
-                            <li>**Zero Tolerance for Bullying:** We are committed to fostering a safe and supportive environment. Any form of bullying is strictly prohibited and will be addressed.</li>
-                            <li>**User Empowerment:** Our app aims to empower individuals—victims, bystanders, and concerned parties—to report incidents and seek help effectively.</li>
-                            <li>**Support & Resolution Focused:** This app is a tool for providing support, facilitating resolution, and promoting well-being, not solely for punitive measures.</li>
-                            <li>**Confidentiality & Anonymity:** Users will be provided with clear options for anonymous reporting where feasible, alongside pathways for identified reports when direct intervention is necessary. The scope and limits of anonymity will be clearly communicated.</li>
-                            <li>**Prevention & Education:** The app incorporates features designed to educate users about bullying, its impact, and proactive prevention strategies.</li>
-                        </ul>
-                    </li>
-                    <li>
-                        **II. User Experience & Functionality**
-                        <ul>
-                            <li>**Easy Reporting Mechanism:** Support for reporting various forms of bullying (e.g., cyberbullying, physical, verbal, social exclusion). Ability to securely submit multimedia evidence (screenshots, photos, videos, audio recordings), with clear guidelines on consent and privacy. User-friendly prompts to gather essential incident details (who, what, when, where, how) without being overly burdensome. Clear choice between anonymous and identified reporting.</li>
-                            <li>**Immediate Support & Resources:** Quick access to pre-defined emergency contacts (e.g., parents, school officials, national crisis hotlines). Links to relevant mental health services, counselling support, and anti-bullying organizations. Provision of practical advice and tools to help users manage bullying situations.</li>
-                            <li>**Secure Communication Channels:** Facilitate secure, in-app communication between reporters and designated support personnel (e.g., school counsellors, administrators). Implement encrypted in-app messaging for follow-ups and ongoing support.</li>
-                            <li>**Admin & Parent/Guardian Dashboards (If Applicable):** Real-time alerts for new reports. Tools for tracking, managing, and resolving reported cases. Secure insights into bullying trends (while maintaining strict user privacy). Differentiated access levels for various users (e.g., parents, school staff).</li>
-                            <li>**Educational Content:** Clear explanations of different bullying types. Actionable strategies for self-protection and supporting others. Encouragement and guidance on how to be an effective "upstander." Promotion of responsible and ethical online behaviour.</li>
-                        </ul>
-                    </li>
-                    <li>
-                        **III. Data Privacy & Security Policies**
-                        <ul>
-                            <li>**Data Minimization:** We collect only the data strictly necessary for the app's operation and purpose.</li>
-                            <li>**Strong Encryption:** All user data, both at rest and in transit, is protected using industry-standard encryption protocols (e.g., AES-256, HTTPS/TLS).</li>
-                            <li>**Secure Data Storage:** Data is stored on secure servers compliant with relevant data protection standards.</li>
-                            <li>**Anonymization & Pseudonymization:** Techniques are employed to protect user identities, especially for anonymous reports.</li>
-                            <li>**Transparent Privacy Policy:** A clear, concise, and easily accessible Privacy Policy outlines data collection, usage, sharing practices, and user rights.</li>
-                            <li>**Data Retention Policy:** Defined periods for data storage and secure deletion protocols are in place.</li>
-                            <li>**Consent:** Explicit consent is obtained from users (or parents/guaradians for minors) for data collection and processing.</li>
-                            <li>**Age Appropriateness:** Compliance with laws and guidelines concerning children's online privacy (e.g., future Indian data protection laws, and principles aligned with global best practices).</li>
-                        </ul>
-                    </li>
-                    <li>
-                        **IV. Reporting & Intervention Protocols**
-                        <ul>
-                            <li>**Clear Reporting Flow:** Defined steps from the submission of a report to its ultimate resolution.</li>
-                            <li>**Designated Responders:** Clearly identified personnel responsible for receiving and acting on reports (e.g., school counsellors, administrators, law enforcement for severe cases).</li>
-                            <li>**Timely Response:** Established expectations for acknowledging and initiating investigations into reports promptly.</li>
-                            <li>**Fair Investigation Procedures:** Outline a thorough and impartial process for investigating reported incidents.</li>
-                            <li>**Intervention Strategies:** A range of potential interventions, including mediation, counselling for both victims and bullies, and appropriate disciplinary actions.</li>
-                            <li>**Feedback Loop:** Identified reporters will receive updates on the status and resolution of their reports, respecting the privacy of all involved parties.</li>
-                            <li>**Escalation Procedures:** Clear protocols for escalating reports to higher authorities (e.g., parents, legal bodies) when necessary.</li>
-                        </ul>
-                    </li>
-                    <li>
-                        **V. Legal & Ethical Considerations (India-Specific)**
-                        <ul>
-                            <li>**Information Technology Act, 2000:** Adherence to provisions related to cybercrime, obscenity, and privacy violations (e.g., Sections 66E, 67).</li>
-                            <li>**Indian Penal Code (IPC):** Awareness of relevant sections for criminal intimidation (Section 507), abetment of suicide (Section 306), and other potential criminal offenses that bullying may lead to.</li>
-                            <li>**Protection of Children from Sexual Offences (POCSO) Act, 2012:** Strict compliance if any reported bullying involves sexual elements.</li>
-                            <li>**Juvenile Justice (Care and Protection of Children) Act, 2015:** Consideration and compliance for cases involving minors.</li>
-                            <li>**NCPCR Guidelines:** Primary adherence to the National Commission for Protection of Child Rights (NCPCR) guidelines on preventing and addressing bullying and cyberbullying in schools. These guidelines particularly emphasize:
-                                <ul>
-                                    <li>Universal applicability to all educational institutions.</li>
-                                    <li>Comprehensive definitions of bullying.</li>
-                                    <li>A clear framework for fostering a positive and inclusive learning environment.</li>
-                                    <li>The critical role of collaboration among schools, parents, and stakeholders.</li>
-                                </ul>
-                            </li>
-                            <li>**Data Protection Law:** Proactive design to ensure compliance with India's upcoming comprehensive data protection law.</li>
-                            <li>**Professional Conduct:** All personnel involved in the app's management and report handling will adhere to the highest ethical standards and professional conduct.</li>
-                        </ul>
-                    </li>
-                    <li>
-                        **VI. Training & Support**
-                        <ul>
-                            <li>**Staff Training:** For integrations with schools or organizations, comprehensive training for staff on app usage, report response protocols, and anti-bullying policy implementation.</li>
-                            <li>**User Guides & FAQs:** Provision of clear instructions and answers to frequently asked questions for all user types.</li>
-                            <li>**Technical Support:** Reliable technical support available to all app users.</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </section>
-    </main>
+    <section id="about">
+        <div class="card">
+            <h2>📚 Guidelines & Policies</h2>
+            <ul>
+                <li>
+                    **I. Core Principles & Philosophy**
+                    <ul>
+                        <li>**Zero Tolerance for Bullying:** We are committed to fostering a safe and supportive environment. Any form of bullying is strictly prohibited and will be addressed.</li>
+                        <li>**User Empowerment:** Our app aims to empower individuals—victims, bystanders, and concerned parties—to report incidents and seek help effectively.</li>
+                        <li>**Support & Resolution Focused:** This app is a tool for providing support, facilitating resolution, and promoting well-being, not solely for punitive measures.</li>
+                        <li>**Confidentiality & Anonymity:** Users will be provided with clear options for anonymous reporting where feasible, alongside pathways for identified reports when direct intervention is necessary. The scope and limits of anonymity will be clearly communicated.</li>
+                        <li>**Prevention & Education:** The app incorporates features designed to educate users about bullying, its impact, and proactive prevention strategies.</li>
+                    </ul>
+                </li>
+                <li>
+                    **II. User Experience & Functionality**
+                    <ul>
+                        <li>**Easy Reporting Mechanism:** Support for reporting various forms of bullying (e.g., cyberbullying, physical, verbal, social exclusion). Ability to securely submit multimedia evidence (screenshots, photos, videos, audio recordings), with clear guidelines on consent and privacy. User-friendly prompts to gather essential incident details (who, what, when, where, how) without being overly burdensome. Clear choice between anonymous and identified reporting.</li>
+                        <li>**Immediate Support & Resources:** Quick access to pre-defined emergency contacts (e.g., parents, school officials, national crisis hotlines). Links to relevant mental health services, counselling support, and anti-bullying organizations. Provision of practical advice and tools to help users manage bullying situations.</li>
+                        <li>**Secure Communication Channels:** Facilitate secure, in-app communication between reporters and designated support personnel (e.g., school counsellors, administrators). Implement encrypted in-app messaging for follow-ups and ongoing support.</li>
+                        <li>**Admin & Parent/Guardian Dashboards (If Applicable):** Real-time alerts for new reports. Tools for tracking, managing, and resolving reported cases. Secure insights into bullying trends (while maintaining strict user privacy). Differentiated access levels for various users (e.g., parents, school staff).</li>
+                        <li>**Educational Content:** Clear explanations of different bullying types. Actionable strategies for self-protection and supporting others. Encouragement and guidance on how to be an effective "upstander." Promotion of responsible and ethical online behaviour.</li>
+                    </ul>
+                </li>
+                <li>
+                    **III. Data Privacy & Security Policies**
+                    <ul>
+                        <li>**Data Minimization:** We collect only the data strictly necessary for the app's operation and purpose.</li>
+                        <li>**Strong Encryption:** All user data, both at rest and in transit, is protected using industry-standard encryption protocols (e.g., AES-256, HTTPS/TLS).</li>
+                        <li>**Secure Data Storage:** Data is stored on secure servers compliant with relevant data protection standards.</li>
+                        <li>**Anonymization & Pseudonymization:** Techniques are employed to protect user identities, especially for anonymous reports.</li>
+                        <li>**Transparent Privacy Policy:** A clear, concise, and easily accessible Privacy Policy outlines data collection, usage, sharing practices, and user rights.</li>
+                        <li>**Data Retention Policy:** Defined periods for data storage and secure deletion protocols are in place.</li>
+                        <li>**Consent:** Explicit consent is obtained from users (or parents/guaradians for minors) for data collection and processing.</li>
+                        <li>**Age Appropriateness:** Compliance with laws and guidelines concerning children's online privacy (e.g., future Indian data protection laws, and principles aligned with global best practices).</li>
+                    </ul>
+                </li>
+                <li>
+                    **IV. Reporting & Intervention Protocols**
+                    <ul>
+                        <li>**Clear Reporting Flow:** Defined steps from the submission of a report to its ultimate resolution.</li>
+                        <li>**Designated Responders:** Clearly identified personnel responsible for receiving and acting on reports (e.g., school counsellors, administrators, law enforcement for severe cases).</li>
+                        <li>**Timely Response:** Established expectations for acknowledging and initiating investigations into reports promptly.</li>
+                        <li>**Fair Investigation Procedures:** Outline a thorough and impartial process for investigating reported incidents.</li>
+                        <li>**Intervention Strategies:** A range of potential interventions, including mediation, counselling for both victims and bullies, and appropriate disciplinary actions.</li>
+                        <li>**Feedback Loop:** Identified reporters will receive updates on the status and resolution of their reports, respecting the privacy of all involved parties.</li>
+                        <li>**Escalation Procedures:** Clear protocols for escalating reports to higher authorities (e.g., parents, legal bodies) when necessary.</li>
+                    </ul>
+                </li>
+                <li>
+                    **V. Legal & Ethical Considerations (India-Specific)**
+                    <ul>
+                        <li>**Information Technology Act, 2000:** Adherence to provisions related to cybercrime, obscenity, and privacy violations (e.g., Sections 66E, 67).</li>
+                        <li>**Indian Penal Code (IPC):** Awareness of relevant sections for criminal intimidation (Section 507), abetment of suicide (Section 306), and other potential criminal offenses that bullying may lead to.</li>
+                        <li>**Protection of Children from Sexual Offences (POCSO) Act, 2012:** Strict compliance if any reported bullying involves sexual elements.</li>
+                        <li>**Juvenile Justice (Care and Protection of Children) Act, 2015:** Consideration and compliance for cases involving minors.</li>
+                        <li>**NCPCR Guidelines:** Primary adherence to the National Commission for Protection of Child Rights (NCPCR) guidelines on preventing and addressing bullying and cyberbullying in schools. These guidelines particularly emphasize:
+                            <ul>
+                                <li>Universal applicability to all educational institutions.</li>
+                                <li>Comprehensive definitions of bullying.</li>
+                                <li>A clear framework for fostering a positive and inclusive learning environment.</li>
+                                <li>The critical role of collaboration among schools, parents, and stakeholders.</li>
+                            </ul>
+                        </li>
+                        <li>**Data Protection Law:** Proactive design to ensure compliance with India's upcoming comprehensive data protection law.</li>
+                        <li>**Professional Conduct:** All personnel involved in the app's management and report handling will adhere to the highest ethical standards and professional conduct.</li>
+                    </ul>
+                </li>
+                <li>
+                    **VI. Training & Support**
+                    <ul>
+                        <li>**Staff Training:** For integrations with schools or organizations, comprehensive training for staff on app usage, report response protocols, and anti-bullying policy implementation.</li>
+                        <li>**User Guides & FAQs:** Provision of clear instructions and answers to frequently asked questions for all user types.</li>
+                        <li>**Technical Support:** Reliable technical support available to all app users.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </section>
 
     <footer>
         BeKind © 2025 | Inspired by Reddit | 💬 Speak up. 💗 Support. 🛑 Stop bullying.
     </footer>
 
-    <!-- Leaflet JS for maps -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         let points = parseInt(localStorage.getItem('bekindPoints')) || 0;
         let currentQuiz = 0;
-        let map; // Leaflet map instance
-        let marker; // Leaflet marker instance
+        let map;
+        let marker;
 
-        // Quiz questions and answers
         const quiz = [
             { q: "What is bullying?", options: ["Being kind", "Hurting someone repeatedly", "Helping others"], answer: 1 },
             { q: "What should you do if you see bullying?", options: ["Ignore", "Join in", "Tell a trusted adult"], answer: 2 },
@@ -583,31 +522,22 @@
             { q: "One way to stop bullying is...", options: ["Support bullies", "Be silent", "Stand up calmly"], answer: 2 },
         ];
 
-        // --- Initial Load and Page Management ---
+        // Initial load for points and dark mode
         document.addEventListener('DOMContentLoaded', () => {
-            // Update points display
             document.getElementById("points").innerText = points;
-
-            // Apply dark mode if previously enabled
             if (localStorage.getItem('darkMode') === 'enabled') {
                 document.body.classList.add('dark-mode');
             }
-
-            // Show the home page by default and activate its nav link
-            showPage('home');
+            showPage('home'); // Ensure 'home' is active on load and its nav link is styled
         });
 
-        /**
-         * Shows the specified page and updates the active navigation link.
-         * @param {string} id The ID of the section to show.
-         */
         function showPage(id) {
             // Get the currently active section's ID *before* changing sections
             const currentActiveSection = document.querySelector('section.active');
             const currentActiveSectionId = currentActiveSection ? currentActiveSection.id : null;
 
-            // Hide the chat input bar by default for all pages
-            document.getElementById("chatInputArea").style.display = "none";
+            // Hide the chat input bar by default
+            document.querySelector(".chat-input").style.display = "none";
 
             // Clear chat if navigating AWAY from the chat page
             if (currentActiveSectionId === 'chat' && id !== 'chat') {
@@ -617,10 +547,7 @@
             // Remove active class from all sections
             document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
             // Add active class to the target section
-            const targetSection = document.getElementById(id);
-            if (targetSection) {
-                targetSection.classList.add("active");
-            }
+            document.getElementById(id).classList.add("active");
 
             // Remove active-nav class from all nav links
             document.querySelectorAll("nav a").forEach(link => link.classList.remove("active-nav"));
@@ -629,12 +556,11 @@
             if (navLink) {
                 navLink.classList.add("active-nav");
             } else if (id === 'home') {
-                 // Fallback for home page if direct onclick isn't found
                  document.querySelector('nav a[aria-label="Home"]').classList.add("active-nav");
             }
 
 
-            // --- Logic specific to certain pages ---
+            // Logic specific to certain pages
             if (id === 'report') {
                 document.getElementById('reportForm').style.display = 'block';
                 document.getElementById('verifying').style.display = 'none';
@@ -646,68 +572,44 @@
             } else if (id === 'chat') {
                 loadChatMessages();
                 // Show the chat input bar ONLY when on the chat page
-                document.getElementById("chatInputArea").style.display = "flex";
-                // Ensure chat area scrolls to bottom after showing
-                const chatArea = document.getElementById("chatArea");
-                if (chatArea) {
-                    chatArea.scrollTop = chatArea.scrollHeight;
-                }
+                document.querySelector(".chat-input").style.display = "flex";
             } else if (id === "quiz") {
                 currentQuiz = 0; // Reset quiz progress when entering the quiz page
                 loadQuiz();
             } else if (id === "tracker") {
-                // Delay map initialization to ensure the section is fully visible and rendered
-                setTimeout(() => {
-                    initMap();
-                }, 100); // Small delay
+                initMap();
             }
         }
 
-        /**
-         * Clears all chat messages from the display and local storage.
-         */
         function clearChat() {
             document.getElementById("chatArea").innerHTML = "";
             localStorage.removeItem('chatMessages');
         }
 
-        /**
-         * Adds points to the user's score and updates the display.
-         * @param {number} p The number of points to add.
-         */
         function addPoints(p) {
             points += p;
             document.getElementById("points").innerText = points;
             localStorage.setItem('bekindPoints', points);
         }
 
-        /**
-         * Handles the submission of a bullying report.
-         */
         function submitReport() {
             const reportText = document.getElementById("reportText").value.trim();
             if (!reportText) {
-                // Use a custom modal or message box instead of alert()
-                showCustomAlert("Please describe the bullying.");
+                alert("Please describe the bullying.");
                 return;
             }
 
             document.getElementById("reportForm").style.display = "none";
             document.getElementById("verifying").style.display = "block";
-
-            // Simulate verification process
             setTimeout(() => {
                 document.getElementById("verifying").style.display = "none";
                 document.getElementById("thanks").style.display = "block";
                 addPoints(5); // Points are added here after verification
+                // Update points display immediately after adding them
+                document.getElementById("points").innerText = points; // Ensure display updates
             }, 2000);
         }
 
-        /**
-         * Generates a response from the Therapist Bot based on user input.
-         * @param {string} userMessage The message from the user.
-         * @returns {string} The bot's response.
-         */
         function getTherapistBotResponse(userMessage) {
             const lowerMessage = userMessage.toLowerCase();
 
@@ -732,11 +634,6 @@
             }
         }
 
-        /**
-         * Displays a chat message in the chat area.
-         * @param {string} sender The sender of the message ('You' or 'Bot').
-         * @param {string} text The message text.
-         */
         function displayChatMessage(sender, text) {
             const chatArea = document.getElementById("chatArea");
             const p = document.createElement("p");
@@ -750,12 +647,9 @@
                 p.classList.add('bot');
             }
             chatArea.appendChild(p);
-            chatArea.scrollTop = chatArea.scrollHeight; // Scroll to the bottom
+            chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        /**
-         * Loads chat messages from local storage and displays them.
-         */
         function loadChatMessages() {
             const messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
             messages.forEach(msg => {
@@ -763,11 +657,8 @@
             });
         }
 
-        /**
-         * Handles the submission of a chat message by the user.
-         */
         function submitChat() {
-            const messageBox = document.getElementById("chatMessageBox");
+            const messageBox = document.querySelector(".chat-input textarea");
             const userMessage = messageBox.value.trim();
 
             if (userMessage !== '') {
@@ -775,9 +666,8 @@
                 const botResponse = getTherapistBotResponse(userMessage);
                 displayChatMessage('Bot', botResponse);
 
-                messageBox.value = ''; // Clear the input box
+                messageBox.value = '';
 
-                // Save messages to local storage
                 let messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
                 messages.push({ sender: 'You', text: userMessage });
                 messages.push({ sender: 'Bot', text: botResponse });
@@ -785,9 +675,6 @@
             }
         }
 
-        /**
-         * Toggles dark mode on and off.
-         */
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             if (document.body.classList.contains('dark-mode')) {
@@ -797,9 +684,6 @@
             }
         }
 
-        /**
-         * Plays the siren sound and shows an SOS alert.
-         */
         function playSiren() {
             const sirenSound = document.getElementById("sirenSound");
             sirenSound.play();
@@ -809,15 +693,10 @@
                 sirenSound.currentTime = 0;
             }, 3000);
 
-            // Use custom alert for SOS
-            showCustomAlert("SOS Alert Sent! Your trusted contacts have been notified.");
+            alert("SOS Alert Sent! Your trusted contacts have been notified.");
         }
 
-        /**
-         * Loads the current quiz question or displays quiz completion message.
-         */
         function loadQuiz() {
-            console.log("loadQuiz called. currentQuiz:", currentQuiz, "quiz length:", quiz.length);
             if (currentQuiz >= quiz.length) {
                 document.getElementById("quizQuestion").innerHTML = `<h3>🎉 Quiz Completed!</h3><p>You scored ${points} points.</p>`;
                 document.getElementById("restartQuizBtn").style.display = "block";
@@ -825,22 +704,13 @@
             }
             document.getElementById("restartQuizBtn").style.display = "none";
             const q = quiz[currentQuiz];
-            if (q) { // Added check if q exists
-                let html = `<h3>${q.q}</h3>`;
-                q.options.forEach((opt, i) => {
-                    html += `<div class='quiz-option' onclick='selectAnswer(${i})'>${opt}</div>`;
-                });
-                document.getElementById("quizQuestion").innerHTML = html;
-            } else {
-                console.error("Quiz question not found at index:", currentQuiz);
-                document.getElementById("quizQuestion").innerHTML = `<h3>Error loading quiz. Please try again.</h3>`;
-            }
+            let html = `<h3>${q.q}</h3>`;
+            q.options.forEach((opt, i) => {
+                html += `<div class='quiz-option' onclick='selectAnswer(${i})'>${opt}</div>`;
+            });
+            document.getElementById("quizQuestion").innerHTML = html;
         }
 
-        /**
-         * Handles the selection of a quiz answer.
-         * @param {number} i The index of the selected answer.
-         */
         function selectAnswer(i) {
             const options = document.querySelectorAll("#quizQuestion .quiz-option");
             const correct = quiz[currentQuiz].answer;
@@ -856,13 +726,9 @@
                 addPoints(2);
             }
             currentQuiz++;
-            // Move to next question after a short delay
             setTimeout(loadQuiz, 1500);
         }
 
-        /**
-         * Resets the quiz progress and points.
-         */
         function resetQuiz() {
             currentQuiz = 0;
             points = 0; // Reset points for quiz
@@ -871,25 +737,9 @@
             loadQuiz();
         }
 
-        /**
-         * Initializes or updates the Leaflet map with the user's current location.
-         */
         function initMap() {
             const locationStatus = document.getElementById("locationStatus");
-            const mapElement = document.getElementById("map");
-
-            // Ensure map container is visible and has dimensions before initializing Leaflet
-            if (mapElement.offsetWidth === 0 || mapElement.offsetHeight === 0) {
-                console.warn("Map container is not visible or has zero dimensions. Retrying map initialization...");
-                locationStatus.innerText = "Map area not ready. Retrying...";
-                setTimeout(initMap, 500); // Retry after a short delay
-                return;
-            }
-
             if (navigator.geolocation) {
-                locationStatus.innerText = "Attempting to get your location...";
-                mapElement.innerHTML = "Loading map..."; // Show loading text
-
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const { latitude, longitude } = position.coords;
@@ -897,7 +747,6 @@
 
                         // Initialize map only if it hasn't been initialized
                         if (!map) {
-                            mapElement.innerHTML = ''; // Clear loading text
                             map = L.map('map').setView([latitude, longitude], 13);
                             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                 attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -909,91 +758,18 @@
                             map.setView([latitude, longitude], 13);
                             marker.setLatLng([latitude, longitude]).setPopupContent('You are here!').openPopup();
                         }
-                        // Invalidate size to ensure map renders correctly after being potentially hidden
-                        if (map) {
-                            map.invalidateSize();
-                        }
                     },
                     (error) => {
-                        let errorMessage = "Error getting location. Please enable location services and try again.";
-                        switch(error.code) {
-                            case error.PERMISSION_DENIED:
-                                errorMessage = "Location access denied. Please allow location access in your browser/app settings.";
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage = "Location information is unavailable.";
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage = "The request to get user location timed out.";
-                                break;
-                            case error.UNKNOWN_ERROR:
-                                errorMessage = "An unknown error occurred while trying to get location.";
-                                break;
-                        }
-                        locationStatus.innerText = errorMessage;
-                        mapElement.innerHTML = "Map not available. " + errorMessage; // Update map area with error
+                        locationStatus.innerText = `Error getting location: ${error.message}. Please enable location services.`;
                         console.error("Geolocation error:", error);
-                    },
-                    {
-                        enableHighAccuracy: true, // Request high accuracy
-                        timeout: 10000, // 10 seconds timeout
-                        maximumAge: 0 // Don't use cached position
                     }
                 );
             } else {
                 locationStatus.innerText = "Geolocation is not supported by your browser.";
-                mapElement.innerHTML = "Map not available. Geolocation is not supported.";
             }
         }
-
-        // --- Custom Alert/Message Box Function (replaces native alert) ---
-        function showCustomAlert(message) {
-            // Create a modal dialog element
-            const modal = document.createElement('div');
-            modal.style.position = 'fixed';
-            modal.style.top = '0';
-            modal.style.left = '0';
-            modal.style.width = '100%';
-            modal.style.height = '100%';
-            modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-            modal.style.display = 'flex';
-            modal.style.alignItems = 'center';
-            modal.style.justifyContent = 'center';
-            modal.style.zIndex = '1000';
-            modal.style.backdropFilter = 'blur(5px)'; // Subtle blur effect
-
-            // Create the content box for the alert
-            const alertBox = document.createElement('div');
-            alertBox.style.backgroundColor = document.body.classList.contains('dark-mode') ? '#333' : 'white';
-            alertBox.style.padding = '20px';
-            alertBox.style.borderRadius = '10px';
-            alertBox.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
-            alertBox.style.maxWidth = '300px';
-            alertBox.style.textAlign = 'center';
-            alertBox.style.color = document.body.classList.contains('dark-mode') ? 'white' : '#333';
-
-            // Add the message
-            const messageText = document.createElement('p');
-            messageText.innerText = message;
-            messageText.style.marginBottom = '15px';
-
-            // Add a close button
-            const closeButton = document.createElement('button');
-            closeButton.innerText = 'OK';
-            closeButton.style.backgroundColor = '#6a5acd';
-            closeButton.style.color = 'white';
-            closeButton.style.border = 'none';
-            closeButton.style.padding = '10px 20px';
-            closeButton.style.borderRadius = '5px';
-            closeButton.style.cursor = 'pointer';
-            closeButton.style.marginTop = '0'; // Override default button margin
-            closeButton.onclick = () => document.body.removeChild(modal);
-
-            alertBox.appendChild(messageText);
-            alertBox.appendChild(closeButton);
-            modal.appendChild(alertBox);
-            document.body.appendChild(modal);
-        }
     </script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
 </html>
