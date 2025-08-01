@@ -71,8 +71,7 @@
             justify-content: space-around;
             background-color: #ffffff;
             border-top: 1px solid #ccc;
-            height: 60px; /* Fixed height for nav bar */
-            padding: 0; /* Remove padding from nav, add to nav a */
+            padding: 0.3em 0;
             z-index: 10;
         }
         /* Dark mode for navigation bar */
@@ -81,14 +80,10 @@
             border-color: #444;
         }
         nav a {
-            font-size: 1.0em;
+            font-size: 1.5em;
             text-decoration: none;
             color: #6a5acd; /* Default icon color */
-            display: flex; /* Use flexbox for vertical centering */
-            align-items: center;
-            justify-content: center;
-            height: 100%; /* Take full height of parent nav */
-            padding: 0 0.8em; /* Only horizontal padding */
+            padding: 0.5em 0.8em;
             border-radius: 8px;
             transition: background 0.2s, color: 0.2s;
         }
@@ -109,20 +104,14 @@
         /* Section styling (hidden by default, shown when active) */
         section {
             display: none;
-            /* Adjusted height to account for header (approx 80px) and fixed nav (60px) */
-            height: calc(100vh - 140px); /* 80px (header) + 60px (nav) */
+            height: calc(100vh - 150px); /* Adjusted for header + nav height */
             overflow-y: auto; /* Enable scrolling for content within section */
-            padding: 2em 1em 1em; /* Reduced general bottom padding */
+            padding: 2em 1em 5em; /* Added padding at bottom for nav */
             animation: fadeIn 1s ease-in; /* Fade-in animation */
         }
         /* Active section display */
         section.active {
             display: block;
-        }
-        /* Specific padding for chat section to account for chat input */
-        section#chat.active {
-            /* Add extra padding at the bottom to ensure content clears the chat input box */
-            padding-bottom: 130px; /* Height of chat-input (60px) + nav (60px) + a little extra margin */
         }
         /* Card styling for content containers */
         .card {
@@ -133,8 +122,6 @@
             margin: auto;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin-bottom: 1em; /* Space between cards */
-            /* Removed max-height and overflow-y from .card itself.
-               The parent section will now handle the scrolling. */
         }
         /* Dark mode for cards */
         .dark-mode .card {
@@ -243,15 +230,14 @@
             display: flex;
             gap: 0.5em;
             position: fixed;
-            bottom: 60px; /* Position directly above the 60px tall nav bar */
+            bottom: 60px; /* Above the nav bar */
             left: 0;
             right: 0;
             background: white;
-            padding: 5px 1em; /* Adjusted padding for a total height of approx 60px */
-            height: 60px; /* Fixed height for the chat input container */
+            padding: 0.5em 1em; /* Added side padding */
             border-top: 1px solid #ccc;
-            display: none; /* New: Hide by default */
-            z-index: 9; /* Ensure it's below nav if they ever overlap, though they shouldn't */
+            /* New: Hide by default */
+            display: none;
         }
         /* Dark mode for chat input container */
         .dark-mode .chat-input {
@@ -262,20 +248,52 @@
         .chat-input textarea {
             flex: 1;
             resize: none;
-            height: 100%; /* Take full height of parent .chat-input */
+            height: 50px;
             margin-top: 0; /* Override default margin */
-            padding: 8px; /* Adjust padding for text area */
         }
         /* Chat input button styling */
         .chat-input button {
             width: 80px;
             margin-top: 0; /* Override default margin */
-            height: 100%; /* Take full height of parent .chat-input */
-            padding: 8px; /* Adjust padding for button */
+        }
+        /* Quiz option styling */
+        .quiz-option {
+            padding: 1em;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            margin: 0.5em 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        /* Styling for correct quiz option */
+        .quiz-option.correct {
+            background: #c8e6c9;
+            border-color: #8bc34a;
+        }
+        /* Styling for wrong quiz option */
+        .quiz-option.wrong {
+            background: #ffcdd2;
+            border-color: #ef9a9a;
+        }
+        /* Dark mode for quiz options */
+        .dark-mode .quiz-option {
+            background: #444;
+            border-color: #666;
+            color: white;
+        }
+        /* Dark mode for correct quiz option */
+        .dark-mode .quiz-option.correct {
+            background: #558B2F;
+            border-color: #8BC34A;
+        }
+        /* Dark mode for wrong quiz option */
+        .dark-mode .quiz-option.wrong {
+            background: #C62828;
+            border-color: #EF5350;
         }
         /* Map styling */
         #map {
-            height: 250px; /* Adjusted height to be more flexible */
+            height: 300px; /* Adjusted height to fit better within the card/section */
             width: 100%;
             border-radius: 10px;
             margin-top: 1em;
@@ -297,166 +315,12 @@
             height: 100%;
             border: 0;
         }
-        /* New Quiz CSS */
-        #score-display {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #333;
-            background-color: #fff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 1em; /* Added margin for spacing */
-            text-align: center;
-        }
-        .dark-mode #score-display {
-            background-color: #444;
-            color: white;
-        }
-
-        .quiz-container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-            margin: auto; /* Center the container */
-        }
-
-        .dark-mode .quiz-container {
-             background-color: #2c2c2c;
-        }
-
-        #quizCard h1 {
-            color: #333;
-            margin-bottom: 25px;
-            font-size: 1.8em;
-        }
-        .dark-mode #quizCard h1 {
-            color: white;
-        }
-
-
-        #question {
-            font-size: 1.4em;
-            margin-bottom: 25px;
-            color: #555;
-            min-height: 60px; /* To prevent layout shift for short questions */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .dark-mode #question {
-            color: #ccc;
-        }
-
-        #options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .option {
-            background-color: #e0e0e0;
-            color: #333;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            text-align: left;
-        }
-        .dark-mode .option {
-            background-color: #555;
-            color: white;
-        }
-
-
-        .option:hover:not(.correct):not(.incorrect) {
-            background-color: #d0d0d0;
-            transform: translateY(-2px);
-        }
-        .dark-mode .option:hover:not(.correct):not(.incorrect) {
-            background-color: #666;
-        }
-
-
-        .option.correct {
-            background-color: #4CAF50; /* Green for correct */
-            color: white;
-            font-weight: bold;
-        }
-
-        .option.incorrect {
-            background-color: #f44336; /* Red for incorrect (optional) */
-            color: white;
-            font-weight: bold;
-        }
-
-        .option:disabled {
-            cursor: not-allowed;
-            opacity: 0.8;
-        }
-
-        #next-btn {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #next-btn:hover {
-            background-color: #0056b3;
-        }
-
-        #next-btn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-
-        @media (max-width: 768px) {
-            .quiz-container {
-                padding: 20px;
-            }
-
-            #quizCard h1 {
-                font-size: 1.5em;
-            }
-
-            #question {
-                font-size: 1.2em;
-            }
-
-            .option {
-                font-size: 1em;
-                padding: 12px 15px;
-            }
-
-            #next-btn {
-                padding: 10px 20px;
-                font-size: 1em;
-            }
-
-            #score-display {
-                font-size: 1em;
-                padding: 8px 12px;
-                margin-top: 15px; /* Adjust top positioning for mobile */
-                margin-right: 15px; /* Adjust right positioning for mobile */
-            }
-        }
     </style>
 </head>
 <body>
 
     <audio id="sirenSound" src="https://www.soundjay.com/misc/sounds/siren-police-01.mp3" preload="auto"></audio>
+    <audio id="tickSound" src="https://www.soundjay.com/buttons/sounds/button-1.mp3" preload="auto"></audio>
 
     <header>
         <div id="darkToggle" onclick="toggleDarkMode()">🌙</div>
@@ -499,7 +363,7 @@
             <h2>📚 Learn About Bullying</h2>
             <p>Watch this animated video to understand what bullying is and how to deal with it kindly and effectively.</p>
             <div class="video-container">
-               <iframe width="560" height="315" src="https://www.youtube.com/embed/ffzIhWoi5ac?si=4a0zcQzG8QbsC_Nv&start=18" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+               <iframe width="560" height="315" src="https://www.youtube.com/embed/ffzIhWoi5ac?si=4a0zcQzG8QbsC_Nv&amp;start=18" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
             <p style="margin-top: 1em;">This video series provides a simple and clear explanation of bullying, its different forms, and positive ways to respond. Remember, you're not alone, and there's always help available.</p>
         </div>
@@ -507,12 +371,9 @@
 
     <section id="quiz">
         <div class="card" id="quizCard">
-            <div id="score-display">Score: 0</div>
-            <h1>Anti-Bullying Awareness Quiz</h1>
-            <div id="question"></div>
-            <div id="options-container">
-            </div>
-            <button id="next-btn" disabled>Next Question</button>
+            <h2>🧠 Quiz Time!</h2>
+            <div id="quizQuestion"></div>
+            <button id="restartQuizBtn" style="display:none;" onclick="resetQuiz()">Restart Quiz</button>
         </div>
     </section>
 
@@ -585,7 +446,7 @@
                         <li>**Immediate Support & Resources:** Quick access to pre-defined emergency contacts (e.g., parents, school officials, national crisis hotlines). Links to relevant mental health services, counselling support, and anti-bullying organizations. Provision of practical advice and tools to help users manage bullying situations.</li>
                         <li>**Secure Communication Channels:** Facilitate secure, in-app communication between reporters and designated support personnel (e.g., school counsellors, administrators). Implement encrypted in-app messaging for follow-ups and ongoing support.</li>
                         <li>**Admin & Parent/Guardian Dashboards (If Applicable):** Real-time alerts for new reports. Tools for tracking, managing, and resolving reported cases. Secure insights into bullying trends (while maintaining strict user privacy). Differentiated access levels for various users (e.g., parents, school staff).</li>
-                        <li>**Educational Content:** Clear explanations of bullying types. Actionable strategies for self-protection and supporting others. Encouragement and guidance on how to be an effective "upstander." Promotion of responsible and ethical online behaviour.</li>
+                        <li>**Educational Content:** Clear explanations of different bullying types. Actionable strategies for self-protection and supporting others. Encouragement and guidance on how to be an effective "upstander." Promotion of responsible and ethical online behaviour.</li>
                     </ul>
                 </li>
                 <li>
@@ -650,89 +511,24 @@
 
     <script>
         let points = parseInt(localStorage.getItem('bekindPoints')) || 0;
+        let currentQuiz = 0;
         let map;
         let marker;
 
-        // New Quiz Data and Variables
-        const quizData = [
-            {
-                question: "What is bullying?",
-                options: [
-                    "A friendly joke between friends",
-                    "A one-time disagreement",
-                    "Repeated aggressive behavior intended to hurt or dominate someone",
-                    "Accidentally bumping into someone"
-                ],
-                correct: 2
-            },
-            {
-                question: "If you witness someone being bullied, what should you do?",
-                options: [
-                    "Ignore it and walk away",
-                    "Join in the bullying",
-                    "Tell a trusted adult (parent, teacher, counselor)",
-                    "Laugh along with the bully"
-                ],
-                correct: 2
-            },
-            {
-                question: "Which of the following is NOT a form of bullying?",
-                options: [
-                    "Physical bullying (hitting, pushing)",
-                    "Verbal bullying (teasing, name-calling)",
-                    "Cyberbullying (spreading rumors online)",
-                    "A respectful debate about different opinions"
-                ],
-                correct: 3
-            },
-            {
-                question: "What is an important step if you are being bullied?",
-                options: [
-                    "Keep it a secret and deal with it alone",
-                    "Retaliate with violence",
-                    "Tell a trusted adult and document what happened",
-                    "Blame yourself for the bullying"
-                ],
-                correct: 2
-            },
-            {
-                question: "How can we create a more inclusive and respectful environment?",
-                options: [
-                    "By judging others based on differences",
-                    "By being empathetic and standing up for others",
-                    "By ignoring people who are different",
-                    "By encouraging gossip"
-                ],
-                correct: 1
-            }
+        const quiz = [
+            { q: "What is bullying?", options: ["Being kind", "Hurting someone repeatedly", "Helping others"], answer: 1 },
+            { q: "What should you do if you see bullying?", options: ["Ignore", "Join in", "Tell a trusted adult"], answer: 2 },
+            { q: "Cyberbullying happens...", options: ["At school", "On the internet", "In playground"], answer: 1 },
+            { q: "One way to stop bullying is...", options: ["Support bullies", "Be silent", "Stand up calmly"], answer: 2 },
         ];
-
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let answeredCurrentQuestion = false;
-
-        // Element references for the quiz
-        const questionElement = document.getElementById('question');
-        const optionsContainer = document.getElementById('options-container');
-        const nextButton = document.getElementById('next-btn');
-        const scoreDisplay = document.getElementById('score-display');
 
         // Initial load for points and dark mode
         document.addEventListener('DOMContentLoaded', () => {
-            const pointsElement = document.getElementById("points");
-            if (pointsElement) {
-                pointsElement.innerText = points;
-            }
-
+            document.getElementById("points").innerText = points;
             if (localStorage.getItem('darkMode') === 'enabled') {
                 document.body.classList.add('dark-mode');
             }
             showPage('home'); // Ensure 'home' is active on load and its nav link is styled
-
-            // Add event listener for the new quiz's "Next" button
-            if (nextButton) {
-                nextButton.addEventListener('click', nextQuestion);
-            }
         });
 
         function showPage(id) {
@@ -741,10 +537,7 @@
             const currentActiveSectionId = currentActiveSection ? currentActiveSection.id : null;
 
             // Hide the chat input bar by default
-            const chatInput = document.querySelector(".chat-input");
-            if (chatInput) {
-                chatInput.style.display = "none";
-            }
+            document.querySelector(".chat-input").style.display = "none";
 
             // Clear chat if navigating AWAY from the chat page
             if (currentActiveSectionId === 'chat' && id !== 'chat') {
@@ -754,11 +547,7 @@
             // Remove active class from all sections
             document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
             // Add active class to the target section
-            const targetSection = document.getElementById(id);
-            if (targetSection) {
-                targetSection.classList.add("active");
-            }
-
+            document.getElementById(id).classList.add("active");
 
             // Remove active-nav class from all nav links
             document.querySelectorAll("nav a").forEach(link => link.classList.remove("active-nav"));
@@ -767,92 +556,57 @@
             if (navLink) {
                 navLink.classList.add("active-nav");
             } else if (id === 'home') {
-                const homeNavLink = document.querySelector('nav a[aria-label="Home"]');
-                if (homeNavLink) {
-                    homeNavLink.classList.add("active-nav");
-                }
+                 document.querySelector('nav a[aria-label="Home"]').classList.add("active-nav");
             }
+
 
             // Logic specific to certain pages
             if (id === 'report') {
-                const reportForm = document.getElementById('reportForm');
-                const verifying = document.getElementById('verifying');
-                const thanks = document.getElementById('thanks');
-                const reportName = document.getElementById("reportName");
-                const victimName = document.getElementById("victimName");
-                const reportText = document.getElementById("reportText");
-
-                if (reportForm) reportForm.style.display = 'block';
-                if (verifying) verifying.style.display = 'none';
-                if (thanks) thanks.style.display = 'none';
-                
+                document.getElementById('reportForm').style.display = 'block';
+                document.getElementById('verifying').style.display = 'none';
+                document.getElementById('thanks').style.display = 'none';
                 // Clear form fields when navigating back to report page
-                if (reportName) reportName.value = '';
-                if (victimName) victimName.value = '';
-                if (reportText) reportText.value = '';
-
+                document.getElementById("reportName").value = '';
+                document.getElementById("victimName").value = '';
+                document.getElementById("reportText").value = '';
             } else if (id === 'chat') {
                 loadChatMessages();
                 // Show the chat input bar ONLY when on the chat page
-                if (chatInput) {
-                    chatInput.style.display = "flex";
-                }
+                document.querySelector(".chat-input").style.display = "flex";
             } else if (id === "quiz") {
-                // Initialize new quiz
-                currentQuestionIndex = 0;
-                score = 0;
-                updateScoreDisplay();
-                loadQuestion();
-                if (nextButton) {
-                    nextButton.style.display = 'block'; // Ensure next button is visible for new quiz
-                }
+                currentQuiz = 0; // Reset quiz progress when entering the quiz page
+                loadQuiz();
             } else if (id === "tracker") {
                 initMap();
             }
         }
 
         function clearChat() {
-            const chatArea = document.getElementById("chatArea");
-            if (chatArea) {
-                chatArea.innerHTML = "";
-            }
+            document.getElementById("chatArea").innerHTML = "";
             localStorage.removeItem('chatMessages');
         }
 
         function addPoints(p) {
             points += p;
-            const pointsElement = document.getElementById("points");
-            if (pointsElement) {
-                pointsElement.innerText = points;
-            }
+            document.getElementById("points").innerText = points;
             localStorage.setItem('bekindPoints', points);
         }
 
         function submitReport() {
-            const reportTextElement = document.getElementById("reportText");
-            const reportText = reportTextElement ? reportTextElement.value.trim() : '';
-
+            const reportText = document.getElementById("reportText").value.trim();
             if (!reportText) {
-                showCustomAlert("Please describe the bullying.");
+                alert("Please describe the bullying.");
                 return;
             }
 
-            const reportForm = document.getElementById("reportForm");
-            const verifying = document.getElementById("verifying");
-            const thanks = document.getElementById("thanks");
-
-            if (reportForm) reportForm.style.display = "none";
-            if (verifying) verifying.style.display = "block";
-
+            document.getElementById("reportForm").style.display = "none";
+            document.getElementById("verifying").style.display = "block";
             setTimeout(() => {
-                if (verifying) verifying.style.display = "none";
-                if (thanks) thanks.style.display = "block";
+                document.getElementById("verifying").style.display = "none";
+                document.getElementById("thanks").style.display = "block";
                 addPoints(5); // Points are added here after verification
                 // Update points display immediately after adding them
-                const pointsElement = document.getElementById("points");
-                if (pointsElement) {
-                    pointsElement.innerText = points; // Ensure display updates
-                }
+                document.getElementById("points").innerText = points; // Ensure display updates
             }, 2000);
         }
 
@@ -882,20 +636,18 @@
 
         function displayChatMessage(sender, text) {
             const chatArea = document.getElementById("chatArea");
-            if (chatArea) {
-                const p = document.createElement("p");
-                p.classList.add('chat-message');
+            const p = document.createElement("p");
+            p.classList.add('chat-message');
 
-                if (sender === 'You') {
-                    p.innerText = "You: " + text;
-                    p.classList.add('user');
-                } else {
-                    p.innerText = "Therapist Bot: " + text;
-                    p.classList.add('bot');
-                }
-                chatArea.appendChild(p);
-                chatArea.scrollTop = chatArea.scrollHeight;
+            if (sender === 'You') {
+                p.innerText = "You: " + text;
+                p.classList.add('user');
+            } else {
+                p.innerText = "Therapist Bot: " + text;
+                p.classList.add('bot');
             }
+            chatArea.appendChild(p);
+            chatArea.scrollTop = chatArea.scrollHeight;
         }
 
         function loadChatMessages() {
@@ -907,8 +659,6 @@
 
         function submitChat() {
             const messageBox = document.querySelector(".chat-input textarea");
-            if (!messageBox) return; // Defensive check
-
             const userMessage = messageBox.value.trim();
 
             if (userMessage !== '') {
@@ -926,212 +676,96 @@
         }
 
         function toggleDarkMode() {
-            if (document.body) { // Defensive check
-                document.body.classList.toggle('dark-mode');
-                if (document.body.classList.contains('dark-mode')) {
-                    localStorage.setItem('darkMode', 'enabled');
-                } else {
-                    localStorage.setItem('darkMode', 'disabled');
-                }
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
             }
         }
 
         function playSiren() {
             const sirenSound = document.getElementById("sirenSound");
-            if (sirenSound) { // Defensive check
-                sirenSound.play();
+            sirenSound.play();
 
-                setTimeout(() => {
-                    sirenSound.pause();
-                    sirenSound.currentTime = 0;
-                }, 3000);
-            }
-            showCustomAlert("SOS Alert Sent! Your trusted contacts have been notified.");
+            setTimeout(() => {
+                sirenSound.pause();
+                sirenSound.currentTime = 0;
+            }, 3000);
+
+            alert("SOS Alert Sent! Your trusted contacts have been notified.");
         }
 
-        // New Quiz Functions
-        function loadQuestion() {
-            if (!questionElement || !optionsContainer || !nextButton || !scoreDisplay) return; // Defensive check
-
-            answeredCurrentQuestion = false; // Reset for new question
-            nextButton.disabled = true; // Disable next button until an answer is chosen
-
-            const currentQuiz = quizData[currentQuestionIndex];
-            if (!currentQuiz) { // Check if quiz is finished
-                endQuiz();
+        function loadQuiz() {
+            if (currentQuiz >= quiz.length) {
+                document.getElementById("quizQuestion").innerHTML = `<h3>🎉 Quiz Completed!</h3><p>You scored ${points} points.</p>`;
+                document.getElementById("restartQuizBtn").style.display = "block";
                 return;
             }
-
-            questionElement.textContent = currentQuiz.question;
-            optionsContainer.innerHTML = ''; // Clear previous options
-
-            currentQuiz.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.classList.add('option');
-                button.textContent = option;
-                button.setAttribute('data-index', index); // Store index for checking answer
-                button.addEventListener('click', checkAnswer);
-                optionsContainer.appendChild(button);
+            document.getElementById("restartQuizBtn").style.display = "none";
+            const q = quiz[currentQuiz];
+            let html = `<h3>${q.q}</h3>`;
+            q.options.forEach((opt, i) => {
+                html += `<div class='quiz-option' onclick='selectAnswer(${i})'>${opt}</div>`;
             });
-            updateScoreDisplay(); // Update score display at the start of each question
+            document.getElementById("quizQuestion").innerHTML = html;
         }
 
-        function checkAnswer(event) {
-            if (answeredCurrentQuestion || !optionsContainer || !nextButton) { // Defensive checks
-                return; // Already answered this question, do nothing
-            }
+        function selectAnswer(i) {
+            const options = document.querySelectorAll("#quizQuestion .quiz-option");
+            const correct = quiz[currentQuiz].answer;
 
-            answeredCurrentQuestion = true;
-            const selectedOption = event.target;
-            const selectedIndex = parseInt(selectedOption.getAttribute('data-index'));
-            const correctIndex = quizData[currentQuestionIndex].correct;
-
-            // Disable all options after an answer is selected
-            Array.from(optionsContainer.children).forEach(button => {
-                button.disabled = true;
+            options.forEach((opt, idx) => {
+                if (idx === correct) opt.classList.add("correct");
+                if (idx === i && i !== correct) opt.classList.add("wrong");
+                opt.onclick = null; // Disable further clicks on options
             });
 
-            if (selectedIndex === correctIndex) {
-                selectedOption.classList.add('correct');
-                score += 2; // Add 2 points for correct answer to quiz score
-                addPoints(2); // Add 2 points to the main app points as well
-                updateScoreDisplay();
-            } else {
-                selectedOption.classList.add('incorrect'); // Optionally show incorrect in red
-                // Also show the correct answer
-                const correctOptionButton = optionsContainer.querySelector(`[data-index="${correctIndex}"]`);
-                if (correctOptionButton) { // Defensive check
-                    correctOptionButton.classList.add('correct');
-                }
+            if (i === correct) {
+                document.getElementById("tickSound").play();
+                addPoints(2);
             }
-
-            nextButton.disabled = false; // Enable next button
+            currentQuiz++;
+            setTimeout(loadQuiz, 1500);
         }
 
-        function updateScoreDisplay() {
-            if (scoreDisplay) {
-                scoreDisplay.textContent = `Score: ${score}`;
-            }
+        function resetQuiz() {
+            currentQuiz = 0;
+            points = 0; // Reset points for quiz
+            localStorage.setItem('bekindPoints', points);
+            document.getElementById("points").innerText = points;
+            loadQuiz();
         }
 
-        function nextQuestion() {
-            if (!questionElement || !optionsContainer || !nextButton) return; // Defensive check
-
-            currentQuestionIndex++;
-            if (currentQuestionIndex < quizData.length) {
-                loadQuestion();
-            } else {
-                endQuiz();
-            }
-        }
-
-        function endQuiz() {
-            if (questionElement) { // Defensive check
-                questionElement.textContent = `Quiz Finished! Your final score is ${score} out of ${quizData.length * 2}.`;
-            }
-            if (optionsContainer) { // Defensive check
-                optionsContainer.innerHTML = ''; // Clear options
-            }
-            if (nextButton) { // Defensive check
-                nextButton.style.display = 'none'; // Hide next button
-            }
-        }
-
-        // Custom Alert/Modal for better UX (replaces alert())
-        function showCustomAlert(message) {
-            const modalId = 'customAlertModal';
-            let modal = document.getElementById(modalId);
-
-            if (!modal) {
-                modal = document.createElement('div');
-                modal.id = modalId;
-                modal.style.cssText = `
-                    position: fixed;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-color: rgba(0,0,0,0.5);
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    z-index: 1000;
-                `;
-                modal.innerHTML = `
-                    <div style="
-                        background-color: white;
-                        padding: 20px;
-                        border-radius: 10px;
-                        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                        text-align: center;
-                        max-width: 80%;
-                        min-width: 250px;
-                    ">
-                        <p id="customAlertMessage" style="margin-bottom: 20px; font-size: 1.1em;"></p>
-                        <button id="customAlertCloseBtn" style="
-                            background-color: #6a5acd;
-                            color: white;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 5px;
-                            cursor: pointer;
-                        ">OK</button>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-
-                const customAlertCloseBtn = document.getElementById('customAlertCloseBtn');
-                if (customAlertCloseBtn) { // Defensive check
-                    customAlertCloseBtn.onclick = () => {
-                        if (modal) modal.style.display = 'none';
-                    };
-                }
-            }
-
-            const customAlertMessage = document.getElementById('customAlertMessage');
-            if (customAlertMessage) { // Defensive check
-                customAlertMessage.innerText = message;
-            }
-            if (modal) { // Defensive check
-                modal.style.display = 'flex';
-            }
-        }
-
-
-        // Function to initialize the map with a fixed location
         function initMap() {
             const locationStatus = document.getElementById("locationStatus");
-            // Obfuscated latitude and longitude for MGN Public School, Adarsh Nagar, Jalandhar
-            // Actual coordinates: Lat 31.33, Lon 75.56
-            const data1 = 15665; // A random number
-            const data2 = 15665; // Another random number
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        locationStatus.innerText = `Latitude: ${latitude}, Longitude: ${longitude}`;
 
-            // A simple mathematical operation to derive the coordinates
-            // This makes it less obvious than direct hardcoding in the source
-            const latitude = (data1 * 2 - 31330 + 10000) / 1000; // Example: (31330 - 10000) / 1000 = 21.33 + 10 = 31.33
-            const longitude = (data2 * 2 - 75560 + 10000) / 1000; // Example: (75560 - 10000) / 1000 = 65.56 + 10 = 75.56
-
-            if (locationStatus) { // Defensive check
-                locationStatus.innerText = `Showing location of MGN Public School, Adarsh Nagar, Jalandhar.`;
-            }
-
-            // Initialize map only if it hasn't been initialized
-            const mapElement = document.getElementById('map');
-            if (mapElement) { // Defensive check for map element
-                if (!map) {
-                    map = L.map('map').setView([latitude, longitude], 13);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    }).addTo(map);
-                    marker = L.marker([latitude, longitude]).addTo(map)
-                        .bindPopup('MGN Public School, Adarsh Nagar, Jalandhar').openPopup();
-                } else {
-                    // If map exists, just update the view and marker position
-                    map.setView([latitude, longitude], 13);
-                    if (marker) { // Defensive check for marker
-                        marker.setLatLng([latitude, longitude]).setPopupContent('MGN Public School, Adarsh Nagar, Jalandhar').openPopup();
+                        // Initialize map only if it hasn't been initialized
+                        if (!map) {
+                            map = L.map('map').setView([latitude, longitude], 13);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(map);
+                            marker = L.marker([latitude, longitude]).addTo(map)
+                                .bindPopup('You are here!').openPopup();
+                        } else {
+                            // If map exists, just update the view and marker position
+                            map.setView([latitude, longitude], 13);
+                            marker.setLatLng([latitude, longitude]).setPopupContent('You are here!').openPopup();
+                        }
+                    },
+                    (error) => {
+                        locationStatus.innerText = `Error getting location: ${error.message}. Please enable location services.`;
+                        console.error("Geolocation error:", error);
                     }
-                }
+                );
+            } else {
+                locationStatus.innerText = "Geolocation is not supported by your browser.";
             }
         }
     </script>
